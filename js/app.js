@@ -306,7 +306,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <span class="dpi-number">${stage.dpi}</span>
                     <span class="dpi-unit">DPI</span>
                 </div>
-                <input type="range" class="dpi-slider" min="100" max="22000" step="50" value="${stage.dpi}" data-index="${idx}">
+                <input type="range" class="dpi-slider" min="50" max="25000" step="50" value="${stage.dpi}" data-index="${idx}">
                 <button class="btn btn-sm ${isActive ? "btn-active-stage" : "btn-outline"} select-stage-btn" data-index="${idx}">
                     ${isActive ? "Activo" : "Seleccionar"}
                 </button>

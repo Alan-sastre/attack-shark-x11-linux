@@ -41,7 +41,8 @@ Built by reverse engineering the firmware and the official Windows software usin
     - Instant selection of **125 Hz (8 ms)**, **250 Hz (4 ms)**, **500 Hz (2 ms)** or **1000 Hz (1 ms)**.
 - **RGB lighting:**
     - 7 real X11 modes (Off, Static, Breathing, Neon, Color Breathing, Static DPI and Breathing DPI).
-    - 24-bit color picker (16.8 million colors) and quick palette.
+    - 24-bit color picker (16.8 million colors) and a pure-color quick palette.
+    - The exact hex code is shown, and after applying the app reads report `0x05` back to confirm what the mouse stored.
     - The custom color applies to **Static** and **Breathing**. **Neon** and **Color Breathing** use firmware-generated colors. **Static DPI** and **Breathing DPI** use the color assigned to the active DPI level.
     - If you press the physical DPI button while another mode is active, the firmware briefly shows the new level's color; the app restores your selected mode after about one second.
     - Speed control (1 to 5) and brightness control (1 to 8).

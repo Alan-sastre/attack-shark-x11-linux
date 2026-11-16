@@ -1,32 +1,34 @@
-# Contribuir
+# Contributing
 
-Gracias por querer mejorar el soporte del Attack Shark X11 en Linux.
+**English** | [Español](CONTRIBUTING.es.md)
 
-## Antes de empezar
+Thank you for helping improve Attack Shark X11 support on Linux.
 
-- Este proyecto habla directamente con el firmware del ratón. Un paquete
-  incorrecto puede dejar el dispositivo sin responder hasta reconectarlo.
-- No envíes el reporte `0x10` (modo bootloader).
-- Si vas a cambiar el protocolo, actualiza también
-  [`REVERSE_ENGINEERING.md`](REVERSE_ENGINEERING.md) y las pruebas manuales
-  descritas allí.
+## Before you start
 
-## Entorno de desarrollo
+- This project talks directly to the mouse firmware. An incorrect packet can
+  leave the device unresponsive until it is reconnected.
+- Never send report `0x10` (bootloader mode).
+- If you change the protocol, update
+  [`REVERSE_ENGINEERING.md`](REVERSE_ENGINEERING.md) and the manual tests
+  described there as well.
+
+## Development environment
 
 ```bash
-git clone https://github.com/TU-USUARIO/attack-shark-x11.git
-cd attack-shark-x11
+git clone https://github.com/TU-USUARIO/attack-shark-x11-linux.git
+cd attack-shark-x11-linux
 sudo ./setup_udev.sh
 ./run.sh
 ```
 
-Requisitos:
+Requirements:
 
-- Linux con `udev`
-- Python 3.10 o superior
-- Navegador basado en Chromium con WebHID (Helium, Chrome, Chromium, Brave o Edge)
+- Linux with `udev`
+- Python 3.10 or newer
+- A Chromium-based browser with WebHID support (Helium, Chrome, Chromium, Brave or Edge)
 
-## Comprobaciones antes de un pull request
+## Checks before a pull request
 
 ```bash
 node --check js/protocol.js
@@ -36,30 +38,30 @@ python3 -m py_compile shark_ctl.py server.py
 bash -n run.sh setup_udev.sh install.sh
 ```
 
-Si has probado con hardware real, indica el modelo, el PID y qué comandos
-ejecutaste. No adjuntes volcados que contengan datos personales.
+If you have tested with real hardware, include the model, PID and which
+commands you ran. Do not attach logs containing personal data.
 
-## Estilo de commits
+## Commit style
 
-Se recomienda [Conventional Commits](https://www.conventionalcommits.org/es/):
+[Conventional Commits](https://www.conventionalcommits.org/en/) are recommended:
 
-- `feat:` nueva funcionalidad
-- `fix:` corrección de errores
-- `docs:` documentación
-- `style:` formato o estilos
-- `refactor:` cambios internos sin alterar comportamiento
-- `test:` pruebas
-- `build:` scripts, dependencias o empaquetado
-- `ci:` integración continua
-- `chore:` mantenimiento
+- `feat:` new functionality
+- `fix:` bug fix
+- `docs:` documentation
+- `style:` formatting or styles
+- `refactor:` internal changes without behavior changes
+- `test:` tests
+- `build:` scripts, dependencies or packaging
+- `ci:` continuous integration
+- `chore:` maintenance
 
-Ejemplo:
+Example:
 
 ```text
-fix(webhid): serializar lecturas y esperar el permiso 0xA0
+fix(webhid): serialize reads and wait for the 0xA0 permission
 ```
 
-## Licencia
+## License
 
-Al contribuir aceptas que tu aporte se publique bajo la licencia MIT del
-proyecto.
+By contributing, you agree that your contribution will be published under the
+project's MIT license.

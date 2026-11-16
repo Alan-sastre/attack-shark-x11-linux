@@ -121,10 +121,37 @@ document.addEventListener("DOMContentLoaded", () => {
         updateBatteryUI();
     });
 
+    let dpiLedRestoreTimer = null;
+
     hid.on("dpiCycle", (event) => {
         state.activeDpiStage = Math.max(0, Math.min(state.dpiStages.length - 1, event.stage - 1));
         renderDpiStages();
         updateQuickDpi();
+
+        // El firmware enciende el LED con el color de la nueva etapa DPI
+        // durante ~1 s, incluso si el modo elegido es otro. Restauramos el
+        // modo RGB del usuario para que el color no cambie "solo".
+        if (state.connected && state.rgb.mode !== 5 && state.rgb.mode !== 6) {
+            if (dpiLedRestoreTimer) clearTimeout(dpiLedRestoreTimer);
+            dpiLedRestoreTimer = setTimeout(async () => {
+                if (!state.connected) return;
+                const c = hexToRgb(state.rgb.color);
+                try {
+                    await hid.setRgbLighting({
+                        mode: state.rgb.mode,
+                        brightness: state.rgb.brightness,
+                        speed: state.rgb.speed,
+                        r: c.r,
+                        g: c.g,
+                        b: c.b,
+                        sleepTimerMin: state.sensor.sleepTimerMin,
+                        keyResponseMs: state.sensor.debounceMs
+                    });
+                } catch (e) {
+                    console.warn("No se pudo restaurar la iluminación tras cambiar DPI:", e);
+                }
+            }, 1000);
+        }
     });
 
     hid.on("commandAck", (ack) => {
@@ -192,6 +219,7 @@ document.addEventListener("DOMContentLoaded", () => {
             state.buttons = current.buttons;
             initButtonSection();
         }
+        updateRgbUI();
         updateQuickDpi();
         saveSettings();
     }
@@ -343,6 +371,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 state.dpiStages[idx].color = e.target.value;
                 const card = e.target.closest(".dpi-stage-card");
                 card.querySelector(".dpi-value-display").style.borderColor = e.target.value;
+
+                // Mantener sincronizada la pestaña RGB cuando usa modo DPI.
+                if (idx === state.activeDpiStage && (state.rgb.mode === 5 || state.rgb.mode === 6)) {
+                    state.rgb.color = e.target.value;
+                    updateRgbUI();
+                }
             });
         });
 
@@ -355,6 +389,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         updateQuickDpi();
+
+        // Si el RGB está en un modo basado en DPI, la vista previa debe
+        // reflejar el color de la etapa activa.
+        if (state.rgb.mode === 5 || state.rgb.mode === 6) {
+            updateRgbUI();
+        }
     }
 
     async function applyDpiSettings() {
@@ -438,6 +478,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
             modeSelect.addEventListener("change", (e) => {
                 state.rgb.mode = parseInt(e.target.value, 10);
+
+                // Los modos DPI usan el color de la etapa activa, no el color
+                // genérico del reporte 0x05.
+                if (state.rgb.mode === 5 || state.rgb.mode === 6) {
+                    const stage = state.dpiStages[state.activeDpiStage];
+                    if (stage) state.rgb.color = stage.color;
+                    if (colorPicker) colorPicker.value = state.rgb.color;
+                }
+
                 updateRgbUI();
             });
         }
@@ -447,7 +496,20 @@ document.addEventListener("DOMContentLoaded", () => {
             colorPicker.value = state.rgb.color;
             colorPicker.addEventListener("input", (e) => {
                 state.rgb.color = e.target.value;
+
+                // En modos DPI el color visible es el de la etapa activa.
+                if (state.rgb.mode === 5 || state.rgb.mode === 6) {
+                    const stage = state.dpiStages[state.activeDpiStage];
+                    if (stage) stage.color = state.rgb.color;
+                }
+
                 updateRgbUI();
+            });
+
+            colorPicker.addEventListener("change", () => {
+                if (state.rgb.mode === 5 || state.rgb.mode === 6) {
+                    renderDpiStages();
+                }
             });
         }
 
@@ -475,6 +537,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 const col = sw.dataset.color;
                 state.rgb.color = col;
                 if (colorPicker) colorPicker.value = col;
+
+                if (state.rgb.mode === 5 || state.rgb.mode === 6) {
+                    const stage = state.dpiStages[state.activeDpiStage];
+                    if (stage) stage.color = col;
+                    renderDpiStages();
+                }
+
                 updateRgbUI();
             });
         });
@@ -482,6 +551,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const applyRgbBtn = document.getElementById("applyRgbBtn");
         if (applyRgbBtn) {
             applyRgbBtn.addEventListener("click", async () => {
+                // En los modos DPI el color se guarda en la etapa activa.
+                if (state.rgb.mode === 5 || state.rgb.mode === 6) {
+                    const stage = state.dpiStages[state.activeDpiStage];
+                    if (stage) stage.color = state.rgb.color;
+                }
+
                 saveSettings();
                 if (!state.connected) {
                     showToast("Configuración RGB guardada localmente.", "info");
@@ -489,6 +564,25 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 try {
                     const rgbColor = hexToRgb(state.rgb.color);
+
+                    // Primero actualizamos los colores de las etapas DPI si el
+                    // modo elegido depende de ellas (0x50 / 0x60).
+                    if (state.rgb.mode === 5 || state.rgb.mode === 6) {
+                        await hid.setDpiStages({
+                            activeStage: state.activeDpiStage,
+                            stages: state.dpiStages.map(s => {
+                                const c = hexToRgb(s.color);
+                                return {
+                                    dpi: s.dpi,
+                                    r: c.r,
+                                    g: c.g,
+                                    b: c.b,
+                                    enabled: s.enabled
+                                };
+                            })
+                        });
+                    }
+
                     await hid.setRgbLighting({
                         mode: state.rgb.mode,
                         brightness: state.rgb.brightness,
@@ -510,14 +604,57 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function updateRgbUI() {
+        const mode = state.rgb.mode;
+        const isOff = mode === 0;
+        const isAutomatic = mode === 3 || mode === 4;
+        const isDpiMode = mode === 5 || mode === 6;
+        const colorPicker = document.getElementById("rgbColorPicker");
+        const note = document.getElementById("rgbModeNote");
         const preview = document.getElementById("rgbPreviewBox");
+
+        // En los modos DPI el color que manda es el de la etapa activa.
+        if (isDpiMode) {
+            const stage = state.dpiStages[state.activeDpiStage];
+            if (stage) {
+                state.rgb.color = stage.color;
+                if (colorPicker && colorPicker.value !== stage.color) {
+                    colorPicker.value = stage.color;
+                }
+            }
+        }
+
+        if (colorPicker) colorPicker.disabled = isOff || isAutomatic;
+        document.querySelectorAll(".color-swatch").forEach(sw => {
+            sw.classList.toggle("is-disabled", isOff || isAutomatic);
+        });
+
         if (preview) {
-            if (state.rgb.mode === 0) {
-                preview.style.backgroundColor = "#111";
+            if (isOff) {
+                preview.style.background = "#111";
                 preview.style.boxShadow = "none";
+            } else if (isAutomatic) {
+                preview.style.background =
+                    "conic-gradient(from 0deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)";
+                preview.style.boxShadow = "0 0 26px rgba(255, 255, 255, 0.25)";
             } else {
-                preview.style.backgroundColor = state.rgb.color;
+                preview.style.background = state.rgb.color;
                 preview.style.boxShadow = `0 0 20px ${state.rgb.color}`;
+            }
+        }
+
+        if (note) {
+            if (isOff) {
+                note.textContent = "La iluminación del ratón está apagada.";
+            } else if (mode === 3) {
+                note.textContent = "Neón usa colores automáticos del firmware; el color personalizado no se aplica en este modo.";
+            } else if (mode === 4) {
+                note.textContent = "Respiración multicolor usa colores automáticos del firmware; el color personalizado no se aplica en este modo.";
+            } else if (isDpiMode) {
+                note.textContent = `Este modo usa el color del Nivel DPI ${state.activeDpiStage + 1}. Al cambiar el color aquí se actualiza ese nivel.`;
+            } else if (mode === 2) {
+                note.textContent = "El color elegido se aplica al efecto de respiración.";
+            } else {
+                note.textContent = "El color elegido se aplica de forma fija.";
             }
         }
     }

@@ -226,12 +226,15 @@ body {
 }
 
 /* Coordenadas relativas en la silueta */
-.pin-1 { top: 70px; left: 80px; }   /* Clic Izq */
-.pin-2 { top: 70px; right: 80px; }  /* Clic Der */
-.pin-3 { top: 90px; left: 127px; }  /* Rueda */
-.pin-4 { top: 165px; left: 52px; }  /* Lateral Del */
-.pin-5 { top: 200px; left: 55px; }  /* Lateral Tras */
 .pin-6 { top: 145px; left: 127px; width: 34px; height: 34px; border-radius: 17px; font-size: 0.62rem; } /* Botón DPI (control de firmware) */
+
+.mouse-pin-note {
+    margin-top: 10px;
+    font-size: 0.76rem;
+    line-height: 1.45;
+    color: var(--text-muted);
+    text-align: center;
+}
 
 .quick-info-box {
     width: 100%;
@@ -499,6 +502,23 @@ body {
 .color-swatch:hover {
     transform: scale(1.2);
     border-color: #fff;
+}
+
+.color-swatch.is-disabled {
+    opacity: 0.3;
+    pointer-events: none;
+    filter: grayscale(1);
+}
+
+.rgb-mode-note {
+    margin-top: 8px;
+    font-size: 0.78rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+}
+
+.rgb-mode-note strong {
+    color: var(--text-secondary);
 }
 
 /* ==========================================================================

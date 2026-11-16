@@ -52,14 +52,13 @@
 
             <div class="mouse-visual-container">
                 <img src="assets/mouse.png" alt="Attack Shark X11 Ratón" class="mouse-img">
-                <!-- Pines interactivos sobre los botones -->
-                <div class="btn-pin pin-1" title="Botón 1: Clic Izquierdo">1</div>
-                <div class="btn-pin pin-2" title="Botón 2: Clic Derecho">2</div>
-                <div class="btn-pin pin-3" title="Botón 3: Clic Central / Rueda">3</div>
-                <div class="btn-pin pin-4" title="Botón 4: Lateral Adelante">4</div>
-                <div class="btn-pin pin-5" title="Botón 5: Lateral Atrás">5</div>
+                <!-- La imagen ya incluye los números 1–5 pintados sobre el ratón.
+                     Solo superponemos el control DPI, que no es un botón HID. -->
                 <div class="btn-pin pin-6" title="Botón DPI: control de firmware, no es un botón HID estándar">DPI</div>
             </div>
+            <p class="mouse-pin-note">
+                5 botones HID (1–5). El botón DPI es un control de firmware aparte y se configura en la pestaña de botones.
+            </p>
 
             <div class="quick-info-box">
                 <div class="info-item">
@@ -174,6 +173,7 @@
                             <div class="form-group">
                                 <label class="form-label" for="rgbModeSelect">Efecto / Modo de Iluminación</label>
                                 <select id="rgbModeSelect" class="form-select"></select>
+                                <p id="rgbModeNote" class="rgb-mode-note"></p>
                             </div>
 
                             <div class="form-group">

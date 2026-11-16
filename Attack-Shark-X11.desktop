@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Attack Shark X11 Driver
+Comment=Configurador de DPI, Polling Rate, Iluminación RGB y Botones para Attack Shark X11
+Exec=@PROJECT_DIR@/run.sh
+Icon=@PROJECT_DIR@/assets/icon.png
+Terminal=false
+Type=Application
+Categories=Settings;HardwareSettings;
+Keywords=mouse;gaming;attack;shark;x11;dpi;rgb;
+StartupNotify=true

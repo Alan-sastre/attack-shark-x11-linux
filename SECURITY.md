@@ -1,29 +1,31 @@
-# Seguridad
+# Security
 
-## Alcance
+**English** | [Español](SECURITY.es.md)
 
-Esta aplicación envía Feature Reports al firmware del Attack Shark X11. Aunque
-el protocolo está documentado y las operaciones se serializan, existe riesgo de
-dejar el dispositivo bloqueado si se envían paquetes mal formados.
+## Scope
 
-## Prácticas seguras
+This application sends Feature Reports to the Attack Shark X11 firmware.
+Although the protocol is documented and operations are serialized, there is a
+risk of leaving the device locked if malformed packets are sent.
 
-- No envíes el reporte `0x10`: está relacionado con el modo bootloader.
-- No leas ni escribas reportes cuyo formato no esté documentado.
-- Respeta el handshake de permiso `0xA0` y el espaciado mínimo entre comandos.
-- Si el ratón deja de responder, desconecta y vuelve a conectar el receptor
-  2.4G. En modelos con Bluetooth, cambia brevemente a Bluetooth y vuelve a 2.4G.
+## Safe practices
 
-## Reportar una vulnerabilidad
+- Never send report `0x10`: it is related to bootloader mode.
+- Do not read or write reports whose format is not documented.
+- Respect the `0xA0` permission handshake and the minimum spacing between
+  commands.
+- If the mouse stops responding, unplug and reconnect the 2.4G receiver. On
+  models with Bluetooth, briefly switch to Bluetooth and back to 2.4G.
 
-No publiques detalles explotables en un issue abierto. Usa el canal privado de
-seguridad de GitHub del repositorio o contacta con los mantenedores. Incluye:
+## Reporting a vulnerability
 
-- versión del proyecto,
-- sistema operativo y navegador,
-- PID del dispositivo,
-- pasos para reproducirlo,
-- impacto observado.
+Do not publish exploitable details in a public issue. Use the repository's
+private GitHub security channel or contact the maintainers. Include:
 
-Las cuestiones puramente de compatibilidad de hardware pueden tratarse en un
-issue normal.
+- project version,
+- operating system and browser,
+- device PID,
+- steps to reproduce,
+- observed impact.
+
+Pure hardware-compatibility questions can be handled in a normal issue.

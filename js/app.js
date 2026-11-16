@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
             mode: 1,
             brightness: 5,
             speed: 4,
-            color: "#ff0055"
+            color: "#ff0000"
         },
         sensor: {
             lod: 0,             // 0: 1mm, 1: 2mm, 2: 0.7mm
@@ -593,7 +593,33 @@ document.addEventListener("DOMContentLoaded", () => {
                         sleepTimerMin: state.sensor.sleepTimerMin,
                         keyResponseMs: state.sensor.debounceMs
                     });
-                    showToast("Efecto RGB aplicado con éxito.", "success");
+
+                    // Verificación real: leemos lo que el ratón guardó.
+                    const selectedHex = state.rgb.color.toUpperCase();
+                    try {
+                        const stored = await hid.readReport(
+                            Protocol.REPORTS.LIGHTING,
+                            Protocol.READ_LENGTHS[Protocol.REPORTS.LIGHTING]
+                        );
+                        if (stored) {
+                            const rgbStored = Protocol.parseRgbPacket(stored);
+                            const storedHex = rgbToHex(rgbStored.r, rgbStored.g, rgbStored.b).toUpperCase();
+                            if (storedHex !== selectedHex) {
+                                showToast(
+                                    `El ratón guardó ${storedHex}, no ${selectedHex}. ` +
+                                    "Comprueba que el modo sea Estático o Respiración.",
+                                    "warning"
+                                );
+                            } else {
+                                showToast(`Color aplicado y confirmado por el ratón: ${selectedHex}`, "success");
+                            }
+                        } else {
+                            showToast("Efecto RGB aplicado con éxito.", "success");
+                        }
+                    } catch (readError) {
+                        console.warn("No se pudo verificar el color aplicado:", readError);
+                        showToast("Efecto RGB aplicado con éxito.", "success");
+                    }
                 } catch (e) {
                     showToast("Error aplicando RGB: " + e.message, "error");
                 }
@@ -609,6 +635,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const isAutomatic = mode === 3 || mode === 4;
         const isDpiMode = mode === 5 || mode === 6;
         const colorPicker = document.getElementById("rgbColorPicker");
+        const colorValue = document.getElementById("rgbColorValue");
         const note = document.getElementById("rgbModeNote");
         const preview = document.getElementById("rgbPreviewBox");
 
@@ -627,6 +654,14 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelectorAll(".color-swatch").forEach(sw => {
             sw.classList.toggle("is-disabled", isOff || isAutomatic);
         });
+
+        if (colorValue) {
+            colorValue.textContent = isOff
+                ? "Apagado"
+                : isAutomatic
+                    ? "Automático"
+                    : state.rgb.color.toUpperCase();
+        }
 
         if (preview) {
             if (isOff) {

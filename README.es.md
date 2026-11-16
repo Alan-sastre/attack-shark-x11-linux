@@ -96,7 +96,7 @@ Construido realizando ingeniería inversa del firmware y software oficial de Win
 ### Paso 1: Clonar e instalar
 
 ```bash
-git clone https://github.com/Alan-sastre/Alan-sastre-attack-shark-x11-linux.git
+git clone https://github.com/Alan-sastre/attack-shark-x11-linux.git
 cd attack-shark-x11-linux
 chmod +x install.sh
 ./install.sh

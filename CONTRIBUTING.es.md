@@ -16,7 +16,7 @@ Gracias por querer mejorar el soporte del Attack Shark X11 en Linux.
 ## Entorno de desarrollo
 
 ```bash
-git clone https://github.com/Alan-sastre/Alan-sastre-attack-shark-x11-linux.git
+git clone https://github.com/Alan-sastre/attack-shark-x11-linux.git
 cd attack-shark-x11-linux
 sudo ./setup_udev.sh
 ./run.sh

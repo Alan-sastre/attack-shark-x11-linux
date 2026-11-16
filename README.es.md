@@ -41,7 +41,8 @@ Construido realizando ingeniería inversa del firmware y software oficial de Win
     - Selección instantánea de **125 Hz (8ms)**, **250 Hz (4ms)**, **500 Hz (2ms)** o **1000 Hz (1ms)**.
 - **Iluminación RGB:**
     - 7 modos reales del X11 (Apagado, Estático, Respiración, Neón, Respiración Multicolor, DPI fijo y DPI respirando).
-    - Selector de color de 24 bits (16.8 millones de colores) y paleta rápida.
+    - Selector de color de 24 bits (16.8 millones de colores) y paleta rápida de colores puros.
+    - Se muestra el código hexadecimal exacto y, al aplicar, la app relee el reporte `0x05` para confirmar lo que guardó el ratón.
     - El color personalizado se aplica en **Estático** y **Respiración**. **Neón** y **Respiración Multicolor** usan colores automáticos del firmware. **DPI fijo** y **DPI respirando** usan el color asignado al nivel de DPI activo.
     - Si pulsas el botón físico de DPI mientras hay otro modo activo, el firmware muestra brevemente el color del nuevo nivel; la aplicación restaura tu modo elegido al cabo de un segundo.
     - Control de velocidad (1 a 5) y brillo (1 a 8).

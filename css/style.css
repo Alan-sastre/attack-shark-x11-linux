@@ -1,0 +1,713 @@
+/* ==========================================================================
+   Attack Shark X11 Linux Driver - Estilos Premium Cyberpunk / Gaming
+   ========================================================================== */
+
+:root {
+    --bg-main: #0c0e17;
+    --bg-surface: #141724;
+    --bg-card: #1c2033;
+    --bg-input: #111420;
+    --border-color: #2b314d;
+    --border-focus: #e2211c;
+    
+    --accent-red: #e2211c;
+    --accent-red-glow: rgba(226, 33, 28, 0.45);
+    --accent-cyan: #00d2ff;
+    --accent-cyan-glow: rgba(0, 210, 255, 0.35);
+    --accent-purple: #9d4edd;
+    
+    --text-primary: #f0f3fc;
+    --text-secondary: #9aa4bf;
+    --text-muted: #5d6785;
+    
+    --success: #00e676;
+    --warning: #ffab00;
+    --danger: #ff1744;
+    
+    --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --shadow-main: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: radial-gradient(circle at 50% 0%, #1a1e36 0%, var(--bg-main) 70%);
+    color: var(--text-primary);
+    font-family: var(--font-main);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+/* ==========================================================================
+   Header & Barra Superior
+   ========================================================================== */
+.app-header {
+    background: rgba(20, 23, 36, 0.85);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand-icon {
+    width: 38px;
+    height: 38px;
+    filter: drop-shadow(0 0 10px var(--accent-red-glow));
+}
+
+.brand-text h1 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    background: linear-gradient(90deg, #ffffff, #cfd7f0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.brand-text .model-tag {
+    font-size: 0.75rem;
+    color: var(--accent-red);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.header-status-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+}
+
+.status-badge .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.status-badge.online .dot {
+    background: var(--success);
+    box-shadow: 0 0 8px var(--success);
+}
+
+.status-badge.offline .dot {
+    background: var(--danger);
+    box-shadow: 0 0 8px var(--danger);
+}
+
+.battery-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   Contenedor Principal & Columnas
+   ========================================================================== */
+.main-layout {
+    max-width: 1300px;
+    margin: 1.5rem auto;
+    padding: 0 1.5rem;
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 2rem;
+    flex: 1;
+    width: 100%;
+}
+
+/* Columna Izquierda: Vista del Ratón */
+.mouse-showcase-panel {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: var(--shadow-main);
+    position: relative;
+}
+
+.showcase-header {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.device-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.mouse-visual-container {
+    position: relative;
+    width: 280px;
+    height: 380px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem 0;
+}
+
+.mouse-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.7));
+    transition: transform 0.3s ease;
+}
+
+/* Pines interactivos sobre el ratón */
+.btn-pin {
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 2px solid var(--accent-red);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 10px var(--accent-red-glow);
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+    z-index: 5;
+}
+
+.btn-pin:hover {
+    transform: scale(1.2);
+    background: var(--accent-red);
+}
+
+/* Coordenadas relativas en la silueta */
+.pin-1 { top: 70px; left: 80px; }   /* Clic Izq */
+.pin-2 { top: 70px; right: 80px; }  /* Clic Der */
+.pin-3 { top: 90px; left: 127px; }  /* Rueda */
+.pin-4 { top: 165px; left: 52px; }  /* Lateral Del */
+.pin-5 { top: 200px; left: 55px; }  /* Lateral Tras */
+.pin-6 { top: 145px; left: 127px; width: 34px; height: 34px; border-radius: 17px; font-size: 0.62rem; } /* Botón DPI (control de firmware) */
+
+.quick-info-box {
+    width: 100%;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    display: flex;
+    justify-content: space-around;
+    margin-top: auto;
+}
+
+.info-item {
+    text-align: center;
+}
+
+.info-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.info-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-top: 4px;
+}
+
+/* Columna Derecha: Configuración / Pestañas */
+.config-workspace {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-main);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   Navegación por Pestañas
+   ========================================================================== */
+.tabs-navigation {
+    display: flex;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0 1rem;
+    overflow-x: auto;
+}
+
+.nav-tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 1rem 1.25rem;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.nav-tab:hover {
+    color: #fff;
+}
+
+.nav-tab.active {
+    color: var(--accent-red);
+    border-bottom-color: var(--accent-red);
+}
+
+.tab-content {
+    padding: 2rem;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
+    animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   Tarjetas de DPI
+   ========================================================================== */
+.dpi-stages-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+}
+
+.dpi-stage-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.dpi-stage-card.active {
+    border-color: var(--accent-red);
+    box-shadow: 0 0 15px rgba(226, 33, 28, 0.2);
+}
+
+.dpi-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stage-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.dpi-value-display {
+    background: var(--bg-input);
+    border-left: 4px solid var(--accent-red);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.dpi-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    font-family: monospace;
+}
+
+.dpi-unit {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.dpi-slider {
+    width: 100%;
+    accent-color: var(--accent-red);
+}
+
+.stage-color-picker {
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    background: none;
+}
+
+/* ==========================================================================
+   Tarjetas de Polling Rate
+   ========================================================================== */
+.polling-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+    margin: 1.5rem 0;
+}
+
+.polling-rate-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1.75rem 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.polling-rate-card:hover {
+    border-color: var(--accent-cyan);
+    transform: translateY(-3px);
+}
+
+.polling-rate-card.active {
+    border-color: var(--accent-red);
+    background: rgba(226, 33, 28, 0.08);
+    box-shadow: 0 0 20px var(--accent-red-glow);
+}
+
+.rate-val {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #fff;
+}
+
+.rate-unit {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+
+.rate-latency {
+    font-size: 0.75rem;
+    color: var(--accent-cyan);
+    margin-top: 8px;
+}
+
+/* ==========================================================================
+   Iluminación RGB
+   ========================================================================== */
+.rgb-controls-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.rgb-preview-wrapper {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+}
+
+.rgb-preview-box {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: var(--accent-red);
+    box-shadow: 0 0 30px var(--accent-red-glow);
+    transition: all 0.3s ease;
+}
+
+.color-swatches-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.color-swatch {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform 0.2s;
+}
+
+.color-swatch:hover {
+    transform: scale(1.2);
+    border-color: #fff;
+}
+
+/* ==========================================================================
+   Formularios, Botones y Controles
+   ========================================================================== */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.form-select, .form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: #fff;
+    font-size: 0.9rem;
+    transition: border-color 0.2s;
+}
+
+.form-select:focus, .form-input:focus {
+    border-color: var(--accent-red);
+    outline: none;
+}
+
+.slider-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.slider-container input[type="range"] {
+    flex: 1;
+    accent-color: var(--accent-red);
+}
+
+.slider-val-badge {
+    min-width: 50px;
+    text-align: right;
+    font-family: monospace;
+    font-weight: 600;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background: var(--accent-red);
+    color: #fff;
+    box-shadow: 0 0 15px var(--accent-red-glow);
+}
+
+.btn-primary:hover {
+    background: #ff2a24;
+    transform: translateY(-2px);
+}
+
+.btn-danger {
+    background: #d32f2f;
+    color: #fff;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.btn-outline:hover {
+    border-color: var(--text-primary);
+}
+
+.btn-active-stage {
+    background: var(--accent-red);
+    color: #fff;
+}
+
+.btn-sm {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+}
+
+/* ==========================================================================
+   Filas de Mapeo de Botones
+   ========================================================================== */
+.button-mapping-row {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 0.85rem 1rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    margin-bottom: 0.75rem;
+}
+
+.btn-badge-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-number {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--accent-red);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* Sección avanzada del botón DPI */
+.mapping-advanced {
+    margin-top: 1.25rem;
+    border: 1px dashed var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 0.9rem 1rem;
+    background: rgba(255, 255, 255, 0.015);
+}
+
+.mapping-advanced > summary {
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    user-select: none;
+}
+
+.mapping-advanced[open] > summary {
+    margin-bottom: 0.75rem;
+}
+
+.mapping-note {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 0.85rem;
+}
+
+/* ==========================================================================
+   Notificaciones Toast
+   ========================================================================== */
+.toast-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.toast-alert {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.9rem;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+    transition: all 0.3s ease;
+}
+
+.toast-success { border-left: 4px solid var(--success); }
+.toast-error { border-left: 4px solid var(--danger); }
+.toast-warning { border-left: 4px solid var(--warning); }
+.toast-info { border-left: 4px solid var(--accent-cyan); }
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+@media (max-width: 950px) {
+    .main-layout {
+        grid-template-columns: 1fr;
+    }
+    .polling-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .rgb-controls-grid {
+        grid-template-columns: 1fr;
+    }
+}

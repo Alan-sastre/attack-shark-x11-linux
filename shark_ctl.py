@@ -322,7 +322,7 @@ def cmd_dpi(args):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Attack Shark X11 Linux Driver CLI")
+    parser = argparse.ArgumentParser(description="Attack Shark X11 Control Center CLI")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     subparsers.add_parser("status", help="Muestra el estado de conexión y la tasa de sondeo")

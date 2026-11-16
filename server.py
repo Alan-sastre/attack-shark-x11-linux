@@ -57,7 +57,7 @@ def main():
             
     url = f"http://127.0.0.1:{port}/index.html"
     print("=" * 65)
-    print("  Attack Shark X11 - Controlador Linux (WebHID Hub)")
+    print("  Attack Shark X11 - Linux Control Center (WebHID)")
     print("=" * 65)
     print(f"[+] Servidor activo en: {url}")
     print("[+] Abriendo interfaz gráfica en el navegador...")

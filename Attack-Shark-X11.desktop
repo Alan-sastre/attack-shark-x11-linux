@@ -1,6 +1,10 @@
 [Desktop Entry]
-Name=Attack Shark X11 Driver
-Comment=Configurador de DPI, Polling Rate, Iluminación RGB y Botones para Attack Shark X11
+Name=Attack Shark X11 Control Center
+Name[es]=Attack Shark X11 Control Center
+GenericName=Mouse Configuration
+GenericName[es]=Configuración de ratón
+Comment=DPI, polling rate, RGB lighting and button mapping for the Attack Shark X11
+Comment[es]=Configurador de DPI, Polling Rate, Iluminación RGB y Botones para Attack Shark X11
 Exec=@PROJECT_DIR@/run.sh
 Icon=@PROJECT_DIR@/assets/icon.png
 Terminal=false

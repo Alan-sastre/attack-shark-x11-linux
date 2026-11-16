@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Lanzador de Attack Shark X11 Linux Driver
+# Lanzador de Attack Shark X11 Control Center
 # ==============================================================================
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

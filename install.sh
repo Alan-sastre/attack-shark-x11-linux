@@ -16,7 +16,7 @@ if [ "$EUID" -eq 0 ]; then
     exit 1
 fi
 
-echo "=== Instalando Attack Shark X11 Linux Driver ==="
+echo "=== Instalando Attack Shark X11 Control Center ==="
 
 # 1. Reglas udev: permiten acceder a los hidraw sin ejecutar la app como root.
 if [ ! -f "/etc/udev/rules.d/99-attack-shark-x11.rules" ]; then
@@ -44,7 +44,7 @@ fi
 chmod +x "$SCRIPT_DIR/run.sh" "$SCRIPT_DIR/setup_udev.sh" "$SCRIPT_DIR/shark_ctl.py" 2>/dev/null || true
 
 echo "[+] Acceso directo instalado en: $DESKTOP_FILE"
-echo "[+] Puedes abrir \"Attack Shark X11 Driver\" desde el menú de aplicaciones."
+echo "[+] Puedes abrir \"Attack Shark X11 Control Center\" desde el menú de aplicaciones."
 echo "[+] O ejecutar: $SCRIPT_DIR/run.sh"
 echo
 echo "Si el ratón no aparece, desconecta y vuelve a conectar el receptor 2.4G."

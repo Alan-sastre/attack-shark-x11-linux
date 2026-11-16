@@ -20,44 +20,44 @@ Built by reverse engineering the firmware and the official Windows software usin
 
 ## 🖱️ Compatibility
 
-| Device / mode | Status |
-| :--- | :--- |
-| Attack Shark X11 — 2.4G receiver (`1d57:fa60`) | Verified on real hardware |
-| Attack Shark X11 — USB wired | Supported by the protocol implementation; hardware reports welcome |
-| Attack Shark X11 — Bluetooth | Configuration over Bluetooth is not exposed; use 2.4G or USB |
-| RGB charging dock | Not configurable over HID; use its touch button |
-| Other Attack Shark models | Not officially supported; open an issue with the PID and report descriptor |
+| Device / mode                                  | Status                                                                     |
+| :--------------------------------------------- | :------------------------------------------------------------------------- |
+| Attack Shark X11 — 2.4G receiver (`1d57:fa60`) | Verified on real hardware                                                  |
+| Attack Shark X11 — USB wired                   | Supported by the protocol implementation; hardware reports welcome         |
+| Attack Shark X11 — Bluetooth                   | Configuration over Bluetooth is not exposed; use 2.4G or USB               |
+| RGB charging dock                              | Not configurable over HID; use its touch button                            |
+| Other Attack Shark models                      | Not officially supported; open an issue with the PID and report descriptor |
 
 ---
 
 ## 🎮 Supported Features
 
 - **DPI adjustment:**
-  - Up to 6 configurable levels in the UI (the firmware supports 8) from **50 to 25,000 DPI**.
-  - True non-linear PAW3311 sensor encoding, including the firmware's double/triple scale.
-  - Custom LED colors for each level.
-  - Real-time selection of the active level.
+    - Up to 6 configurable levels in the UI (the firmware supports 8) from **50 to 25,000 DPI**.
+    - True non-linear PAW3311 sensor encoding, including the firmware's double/triple scale.
+    - Custom LED colors for each level.
+    - Real-time selection of the active level.
 - **Polling rate:**
-  - Instant selection of **125 Hz (8 ms)**, **250 Hz (4 ms)**, **500 Hz (2 ms)** or **1000 Hz (1 ms)**.
+    - Instant selection of **125 Hz (8 ms)**, **250 Hz (4 ms)**, **500 Hz (2 ms)** or **1000 Hz (1 ms)**.
 - **RGB lighting:**
-  - 7 real X11 modes (Off, Static, Breathing, Neon, Color Breathing, Static DPI and Breathing DPI).
-  - 24-bit color picker (16.8 million colors) and quick palette.
-  - Speed control (1 to 5) and brightness control (1 to 8).
-  - The **RGB charging dock is independent**: it does not expose a HID configuration channel. Its effects are changed with the dock's touch button (short press) and turned off with a long press.
+    - 7 real X11 modes (Off, Static, Breathing, Neon, Color Breathing, Static DPI and Breathing DPI).
+    - 24-bit color picker (16.8 million colors) and quick palette.
+    - Speed control (1 to 5) and brightness control (1 to 8).
+    - The **RGB charging dock is independent**: it does not expose a HID configuration channel. Its effects are changed with the dock's touch button (short press) and turned off with a long press.
 - **Sensor & competitive performance:**
-  - Lift-off distance (LOD): **0.7 mm**, **1 mm** or **2 mm**.
-  - **Motion Sync**, **Angle Snapping** and **Ripple Control**.
-  - Key debounce is not exposed over HID on this model; it is kept only in the local profile.
+    - Lift-off distance (LOD): **0.7 mm**, **1 mm** or **2 mm**.
+    - **Motion Sync**, **Angle Snapping** and **Ripple Control**.
+    - Key debounce is not exposed over HID on this model; it is kept only in the local profile.
 - **Power management:**
-  - Battery level is read from asynchronous firmware events (not by polling Feature Reports).
-  - Deep-sleep timer.
-  - LED inactivity shutdown is not exposed over HID on this model.
+    - Battery level is read from asynchronous firmware events (not by polling Feature Reports).
+    - Deep-sleep timer.
+    - LED inactivity shutdown is not exposed over HID on this model.
 - **Button mapping:**
-  - Remap the **5 standard HID buttons** (left, right, wheel, forward and back).
-  - The top DPI button is configured in a separate advanced section: it is a firmware control, not a sixth HID button.
+    - Remap the **5 standard HID buttons** (left, right, wheel, forward and back).
+    - The top DPI button is configured in a separate advanced section: it is a firmware control, not a sixth HID button.
 - **Profile management:**
-  - Automatic persistent saving.
-  - Export and import profiles in `.json` format.
+    - Automatic persistent saving.
+    - Export and import profiles in `.json` format.
 
 ---
 
@@ -72,16 +72,16 @@ Built by reverse engineering the firmware and the official Windows software usin
 
 ## 🧰 Troubleshooting
 
-| Problem | What to check |
-| :--- | :--- |
-| The device does not appear in the WebHID picker | Use Helium, Chrome, Chromium, Brave or Edge. Close other tabs that may already have the device open, reload with `Ctrl+Shift+R`, and connect the 2.4G receiver. |
-| "Permission denied" or the device cannot be opened | Run `./install.sh` or `sudo ./setup_udev.sh`, then unplug and reconnect the receiver. Check that `/dev/hidraw*` nodes are readable by your user. |
-| The mouse stops responding | Unplug and reconnect the 2.4G receiver. On Bluetooth-capable models, switch briefly to Bluetooth and back to 2.4G. Do not send unknown reports. |
-| Battery shows `--%` | Battery data arrives asynchronously from the events interface. If the browser does not grant that interface, the value simply stays unavailable; it is not polled over `0x0B`. |
-| I only see 5 buttons | That is correct: the X11 exposes 5 standard HID buttons. The DPI key is a separate firmware control shown under "Advanced". |
-| The charging dock RGB does not change | The dock has its own controller and touch button; it is not configurable through the mouse protocol. |
-| The app does not open | Run `./run.sh` from a terminal to see the error. You can also open `index.html` directly in a WebHID-capable browser. |
-| Nothing works after a kernel update | Reconnect the receiver, rerun `./install.sh`, and verify the udev rule is installed in `/etc/udev/rules.d/`. |
+| Problem                                            | What to check                                                                                                                                                                  |
+| :------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The device does not appear in the WebHID picker    | Use Helium, Chrome, Chromium, Brave or Edge. Close other tabs that may already have the device open, reload with `Ctrl+Shift+R`, and connect the 2.4G receiver.                |
+| "Permission denied" or the device cannot be opened | Run `./install.sh` or `sudo ./setup_udev.sh`, then unplug and reconnect the receiver. Check that `/dev/hidraw*` nodes are readable by your user.                               |
+| The mouse stops responding                         | Unplug and reconnect the 2.4G receiver. On Bluetooth-capable models, switch briefly to Bluetooth and back to 2.4G. Do not send unknown reports.                                |
+| Battery shows `--%`                                | Battery data arrives asynchronously from the events interface. If the browser does not grant that interface, the value simply stays unavailable; it is not polled over `0x0B`. |
+| I only see 5 buttons                               | That is correct: the X11 exposes 5 standard HID buttons. The DPI key is a separate firmware control shown under "Advanced".                                                    |
+| The charging dock RGB does not change              | The dock has its own controller and touch button; it is not configurable through the mouse protocol.                                                                           |
+| The app does not open                              | Run `./run.sh` from a terminal to see the error. You can also open `index.html` directly in a WebHID-capable browser.                                                          |
+| Nothing works after a kernel update                | Reconnect the receiver, rerun `./install.sh`, and verify the udev rule is installed in `/etc/udev/rules.d/`.                                                                   |
 
 ---
 
@@ -96,7 +96,7 @@ Built by reverse engineering the firmware and the official Windows software usin
 ### Step 1: Clone and install
 
 ```bash
-git clone https://github.com/TU-USUARIO/attack-shark-x11-linux.git
+git clone https://github.com/Alan-sastre/Alan-sastre-attack-shark-x11-linux.git
 cd attack-shark-x11-linux
 chmod +x install.sh
 ./install.sh
@@ -104,7 +104,7 @@ chmod +x install.sh
 
 The installer configures the udev permissions and adds **"Attack Shark X11 Control Center"** to the application menu with the correct path.
 
-*(Optional: unplug and reconnect the 2.4G receiver to apply the permissions immediately.)*
+_(Optional: unplug and reconnect the 2.4G receiver to apply the permissions immediately.)_
 
 If you prefer to configure only the USB permissions manually:
 

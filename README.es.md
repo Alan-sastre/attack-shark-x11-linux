@@ -20,44 +20,44 @@ Construido realizando ingeniería inversa del firmware y software oficial de Win
 
 ## 🖱️ Compatibilidad
 
-| Dispositivo / modo | Estado |
-| :--- | :--- |
-| Attack Shark X11 — receptor 2.4G (`1d57:fa60`) | Verificado en hardware real |
-| Attack Shark X11 — USB por cable | Soportado por la implementación del protocolo; se agradecen reportes de hardware |
-| Attack Shark X11 — Bluetooth | La configuración por Bluetooth no está expuesta; usa 2.4G o USB |
-| Base de carga RGB | No configurable por HID; usa su botón táctil |
-| Otros modelos Attack Shark | Sin soporte oficial; abre un issue con el PID y el descriptor de reportes |
+| Dispositivo / modo                             | Estado                                                                           |
+| :--------------------------------------------- | :------------------------------------------------------------------------------- |
+| Attack Shark X11 — receptor 2.4G (`1d57:fa60`) | Verificado en hardware real                                                      |
+| Attack Shark X11 — USB por cable               | Soportado por la implementación del protocolo; se agradecen reportes de hardware |
+| Attack Shark X11 — Bluetooth                   | La configuración por Bluetooth no está expuesta; usa 2.4G o USB                  |
+| Base de carga RGB                              | No configurable por HID; usa su botón táctil                                     |
+| Otros modelos Attack Shark                     | Sin soporte oficial; abre un issue con el PID y el descriptor de reportes        |
 
 ---
 
 ## 🎮 Características Soportadas
 
 - **Ajuste de DPI:**
-  - Hasta 6 niveles configurables en la interfaz (el firmware soporta 8) entre **50 y 25,000 DPI**.
-  - Codificación no lineal real del sensor PAW3311; soporta la escala doble/triple del firmware.
-  - Colores LED indicadores personalizados para cada nivel.
-  - Selección en tiempo real del nivel activo.
+    - Hasta 6 niveles configurables en la interfaz (el firmware soporta 8) entre **50 y 25,000 DPI**.
+    - Codificación no lineal real del sensor PAW3311; soporta la escala doble/triple del firmware.
+    - Colores LED indicadores personalizados para cada nivel.
+    - Selección en tiempo real del nivel activo.
 - **Tasa de Sondeo (Polling Rate):**
-  - Selección instantánea de **125 Hz (8ms)**, **250 Hz (4ms)**, **500 Hz (2ms)** o **1000 Hz (1ms)**.
+    - Selección instantánea de **125 Hz (8ms)**, **250 Hz (4ms)**, **500 Hz (2ms)** o **1000 Hz (1ms)**.
 - **Iluminación RGB:**
-  - 7 modos reales del X11 (Apagado, Estático, Respiración, Neón, Respiración Multicolor, DPI fijo y DPI respirando).
-  - Selector de color de 24 bits (16.8 millones de colores) y paleta rápida.
-  - Control de velocidad (1 a 5) y brillo (1 a 8).
-  - La **base de carga RGB es independiente**: no expone un canal HID de configuración. Sus efectos se cambian con el botón táctil de la base (pulsación corta) y se apagan con una pulsación larga.
+    - 7 modos reales del X11 (Apagado, Estático, Respiración, Neón, Respiración Multicolor, DPI fijo y DPI respirando).
+    - Selector de color de 24 bits (16.8 millones de colores) y paleta rápida.
+    - Control de velocidad (1 a 5) y brillo (1 a 8).
+    - La **base de carga RGB es independiente**: no expone un canal HID de configuración. Sus efectos se cambian con el botón táctil de la base (pulsación corta) y se apagan con una pulsación larga.
 - **Sensor & Rendimiento Competitivo:**
-  - Distancia de despegue (LOD): **0.7 mm**, **1 mm** o **2 mm**.
-  - Sincronización **Motion Sync**, **Angle Snapping** y **Ripple Control**.
-  - El anti-rebote (Key Debounce) no está expuesto por HID en este modelo; se conserva solo en el perfil local.
+    - Distancia de despegue (LOD): **0.7 mm**, **1 mm** o **2 mm**.
+    - Sincronización **Motion Sync**, **Angle Snapping** y **Ripple Control**.
+    - El anti-rebote (Key Debounce) no está expuesto por HID en este modelo; se conserva solo en el perfil local.
 - **Gestión de Energía:**
-  - Lectura de batería por eventos asíncronos del firmware (no por sondeo de Feature Reports).
-  - Temporizador de suspensión profunda.
-  - El apagado de LEDs por inactividad no está expuesto por HID en este modelo.
+    - Lectura de batería por eventos asíncronos del firmware (no por sondeo de Feature Reports).
+    - Temporizador de suspensión profunda.
+    - El apagado de LEDs por inactividad no está expuesto por HID en este modelo.
 - **Mapeo de Botones:**
-  - Reasignación de los **5 botones HID estándar** (izquierdo, derecho, rueda, adelante y atrás).
-  - El botón superior de DPI se configura en una sección avanzada aparte: es un control de firmware, no un sexto botón HID.
+    - Reasignación de los **5 botones HID estándar** (izquierdo, derecho, rueda, adelante y atrás).
+    - El botón superior de DPI se configura en una sección avanzada aparte: es un control de firmware, no un sexto botón HID.
 - **Gestión de Perfiles:**
-  - Guardado persistente automático.
-  - Exportación e importación de perfiles en formato `.json`.
+    - Guardado persistente automático.
+    - Exportación e importación de perfiles en formato `.json`.
 
 ---
 
@@ -72,16 +72,16 @@ Construido realizando ingeniería inversa del firmware y software oficial de Win
 
 ## 🧰 Solución de problemas
 
-| Problema | Qué revisar |
-| :--- | :--- |
-| El dispositivo no aparece en el selector WebHID | Usa Helium, Chrome, Chromium, Brave o Edge. Cierra otras pestañas que puedan tener el dispositivo abierto, recarga con `Ctrl+Shift+R` y conecta el receptor 2.4G. |
-| "Permiso denegado" o no se puede abrir el dispositivo | Ejecuta `./install.sh` o `sudo ./setup_udev.sh`, y desconecta y vuelve a conectar el receptor. Comprueba que tu usuario puede leer los nodos `/dev/hidraw*`. |
-| El ratón deja de responder | Desconecta y vuelve a conectar el receptor 2.4G. En modelos con Bluetooth, cambia brevemente a Bluetooth y vuelve a 2.4G. No envíes reportes desconocidos. |
-| La batería muestra `--%` | La batería llega de forma asíncrona por la interfaz de eventos. Si el navegador no concede esa interfaz, el valor simplemente no está disponible; no se sondea por `0x0B`. |
-| Solo veo 5 botones | Es correcto: el X11 expone 5 botones HID estándar. El botón DPI es un control de firmware aparte y aparece en "Avanzado". |
-| El RGB de la base de carga no cambia | La base tiene su propio controlador y botón táctil; no se configura con el protocolo del ratón. |
-| La aplicación no abre | Ejecuta `./run.sh` desde una terminal para ver el error. También puedes abrir `index.html` directamente en un navegador con WebHID. |
-| Nada funciona tras actualizar el kernel | Reconecta el receptor, vuelve a ejecutar `./install.sh` y comprueba que la regla udev está en `/etc/udev/rules.d/`. |
+| Problema                                              | Qué revisar                                                                                                                                                                |
+| :---------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| El dispositivo no aparece en el selector WebHID       | Usa Helium, Chrome, Chromium, Brave o Edge. Cierra otras pestañas que puedan tener el dispositivo abierto, recarga con `Ctrl+Shift+R` y conecta el receptor 2.4G.          |
+| "Permiso denegado" o no se puede abrir el dispositivo | Ejecuta `./install.sh` o `sudo ./setup_udev.sh`, y desconecta y vuelve a conectar el receptor. Comprueba que tu usuario puede leer los nodos `/dev/hidraw*`.               |
+| El ratón deja de responder                            | Desconecta y vuelve a conectar el receptor 2.4G. En modelos con Bluetooth, cambia brevemente a Bluetooth y vuelve a 2.4G. No envíes reportes desconocidos.                 |
+| La batería muestra `--%`                              | La batería llega de forma asíncrona por la interfaz de eventos. Si el navegador no concede esa interfaz, el valor simplemente no está disponible; no se sondea por `0x0B`. |
+| Solo veo 5 botones                                    | Es correcto: el X11 expone 5 botones HID estándar. El botón DPI es un control de firmware aparte y aparece en "Avanzado".                                                  |
+| El RGB de la base de carga no cambia                  | La base tiene su propio controlador y botón táctil; no se configura con el protocolo del ratón.                                                                            |
+| La aplicación no abre                                 | Ejecuta `./run.sh` desde una terminal para ver el error. También puedes abrir `index.html` directamente en un navegador con WebHID.                                        |
+| Nada funciona tras actualizar el kernel               | Reconecta el receptor, vuelve a ejecutar `./install.sh` y comprueba que la regla udev está en `/etc/udev/rules.d/`.                                                        |
 
 ---
 
@@ -96,7 +96,7 @@ Construido realizando ingeniería inversa del firmware y software oficial de Win
 ### Paso 1: Clonar e instalar
 
 ```bash
-git clone https://github.com/TU-USUARIO/attack-shark-x11-linux.git
+git clone https://github.com/Alan-sastre/Alan-sastre-attack-shark-x11-linux.git
 cd attack-shark-x11-linux
 chmod +x install.sh
 ./install.sh
@@ -104,7 +104,7 @@ chmod +x install.sh
 
 El instalador configura los permisos udev y añade **"Attack Shark X11 Control Center"** al menú de aplicaciones con la ruta correcta.
 
-*(Opcional: desconecta y vuelve a conectar el receptor 2.4G para aplicar los permisos de inmediato).*
+_(Opcional: desconecta y vuelve a conectar el receptor 2.4G para aplicar los permisos de inmediato)._
 
 Si prefieres configurar solo los permisos USB manualmente:
 
@@ -117,15 +117,19 @@ sudo ./setup_udev.sh
 ### Paso 2: Iniciar la Aplicación Gráfica (WebHID)
 
 #### Opción A: Desde tu lanzador de aplicaciones
+
 Busca **"Attack Shark X11 Control Center"** en GNOME, KDE, Rofi, Wofi o tu menú habitual.
 
 #### Opción B: Desde la terminal
+
 ```bash
 ./run.sh
 ```
+
 Esto iniciará el servidor local y abrirá la aplicación en **Helium Browser** o tu navegador Chromium compatible.
 
 #### Opción C: Abrir `index.html` directamente
+
 Si tu navegador soporta WebHID, también puedes abrir el archivo `index.html` sin usar el servidor local.
 
 ---

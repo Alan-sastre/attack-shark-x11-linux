@@ -1,73 +1,75 @@
-# Dossier de Ingeniería Inversa: Attack Shark X11 en Linux
+# Reverse Engineering Dossier: Attack Shark X11 on Linux
 
-Este documento describe el protocolo HID del Attack Shark X11 (VID `0x1D57`,
-PIDs `0xFA60`, `0xFA61`, `0x2124`) verificado contra el descriptor real del
-receptor y la documentación de la comunidad. El objetivo es que cualquier
-paquete enviado al ratón sea correcto, esté bien serializado y no deje el
-dispositivo sin responder.
+**English** | [Español](REVERSE_ENGINEERING.es.md)
+
+This document describes the HID protocol of the Attack Shark X11 (VID `0x1D57`,
+PIDs `0xFA60`, `0xFA61`, `0x2124`) as verified against the receiver's real
+descriptor and community documentation. The goal is for every packet sent to
+the mouse to be correct, well serialized, and unable to leave the device
+unresponsive.
 
 ---
 
-## 1. Interfaces HID del receptor
+## 1. Receiver HID interfaces
 
-El receptor 2.4G expone cuatro interfaces. La configuración se realiza
-**únicamente** en la interfaz cuyo descriptor contiene `Usage Page 0x000B`:
+The 2.4G receiver exposes four interfaces. Configuration is performed
+**only** on the interface whose descriptor contains `Usage Page 0x000B`:
 
-| Interfaz | Uso | Nodo típico |
+| Interface | Purpose | Typical node |
 | :--- | :--- | :--- |
-| 0 | Teclado | `hidraw3` (protegido por el kernel) |
-| 1 | Ratón estándar: 5 botones HID | `hidraw4` |
-| 2 | System Control + Consumer + vendor (`0x0B`) | `hidraw5` ← configuración |
-| 3 | Teclado / multimedia | `hidraw6` |
+| 0 | Keyboard | `hidraw3` (kernel-protected) |
+| 1 | Standard mouse: 5 HID buttons | `hidraw4` |
+| 2 | System Control + Consumer + vendor (`0x0B`) | `hidraw5` ← configuration |
+| 3 | Keyboard / media | `hidraw6` |
 
-La interfaz de eventos (`Usage Page 0x000A`) es independiente y se usa para
-notificaciones asíncronas: batería, ACK de comandos y cambios de perfil/DPI.
+The events interface (`Usage Page 0x000A`) is separate and is used for
+asynchronous notifications: battery, command ACKs, and profile/DPI changes.
 
-En WebHID se debe validar la colección:
+In WebHID, validate the collection:
 
 ```js
 device.collections.some(c => c.usagePage === 0x000B)
 ```
 
-Nunca se debe abrir "el primer dispositivo" que coincida con el VID/PID ni una
-interfaz distinta. Hacerlo puede enviar comandos al canal equivocado.
+Never open "the first device" matching the VID/PID, and never open a different
+interface. Doing so can send commands to the wrong channel.
 
-### Base de carga
+### Charging dock
 
-La base de carga RGB del X11 **no es un dispositivo HID de configuración** y no
-comparte el reporte `0x05` del ratón. En el hardware verificado no enumera como
-un USB adicional: es una base de alimentación con un controlador LED propio y un
-botón táctil. Una pulsación corta cambia el efecto/color y una pulsación larga
-apaga la iluminación. El software oficial tampoco permite fijar un color
-arbitrario en la base; esta aplicación controla únicamente el RGB del ratón.
+The X11 RGB charging dock **is not a configurable HID device** and does not
+share the mouse's report `0x05`. On the verified hardware it does not enumerate
+as an additional USB device: it is a power dock with its own LED controller and
+a touch button. A short press changes the effect/color, and a long press turns
+the lighting off. The official software also cannot set an arbitrary fixed color
+on the dock; this application controls only the mouse RGB.
 
 ---
 
-## 2. Report IDs y longitudes
+## 2. Report IDs and lengths
 
-| Reporte | ID | Longitud total | Uso |
+| Report | ID | Total length | Purpose |
 | :--- | :--- | :--- | :--- |
-| DPI | `0x04` | 56 (`0x38`) | Etapas, LOD, Motion Sync, Angle Snap, Ripple, indicador |
-| Iluminación / preferencias | `0x05` | 15 (`0x0F`) | Modo, color, brillo, velocidad, reposo |
-| Polling Rate | `0x06` | 9 (`0x09`) | 125 / 250 / 500 / 1000 Hz |
-| Wake-up | `0x07` | 7 | Modo de despertar |
-| Mapeo de botones | `0x08` | 59 (`0x3B`) | 18 slots de 3 bytes |
+| DPI | `0x04` | 56 (`0x38`) | Stages, LOD, Motion Sync, Angle Snap, Ripple, indicator |
+| Lighting / preferences | `0x05` | 15 (`0x0F`) | Mode, color, brightness, speed, sleep |
+| Polling rate | `0x06` | 9 (`0x09`) | 125 / 250 / 500 / 1000 Hz |
+| Wake-up | `0x07` | 7 | Wake-up mode |
+| Button mapping | `0x08` | 59 (`0x3B`) | 18 slots of 3 bytes |
 | Macro | `0x09` | 64 (`0x40`) | Macros |
-| Perfil | `0x0A` | variable (`0x80` al leer) | Perfiles |
-| Versión del dispositivo | `0x0B` | 8 | **No es la batería** |
-| Ajustes de perfil | `0x0C` | 10 | Ajustes de perfil |
-| Permiso de lectura | `0xA0` | 8 | Handshake de un solo uso |
-| Eventos | `0x03` | variable | Interfaz de eventos |
+| Profile | `0x0A` | variable (`0x80` when reading) | Profiles |
+| Device version | `0x0B` | 8 | **Not the battery** |
+| Profile settings | `0x0C` | 10 | Profile settings |
+| Read permission | `0xA0` | 8 | Single-use handshake |
+| Events | `0x03` | variable | Events interface |
 
-> **Peligro:** no leer ni escribir el reporte `0x10`. Está asociado al modo
-> bootloader y no se debe usar desde la aplicación.
+> **Danger:** do not read or write report `0x10`. It is associated with
+> bootloader mode and must not be used by the application.
 
 ---
 
 ## 3. Checksum
 
-Los reportes `0x04`, `0x05` y `0x08` terminan con una suma de 16 bits en
-big-endian. El rango sumado **no incluye** el Report ID ni el byte de longitud:
+Reports `0x04`, `0x05` and `0x08` end with a 16-bit big-endian sum. The summed
+range **does not include** the Report ID or the length byte:
 
 ```python
 def checksum(buf, start, end):
@@ -75,181 +77,178 @@ def checksum(buf, start, end):
     return (total >> 8) & 0xFF, total & 0xFF
 ```
 
-- DPI: suma bytes `3..49`, checksum en `50..51`.
-- Iluminación: suma bytes `3..10`, checksum en `11..12`.
-- Botones: suma bytes `3..56`, checksum en `57..58`.
+- DPI: sum bytes `3..49`, checksum at `50..51`.
+- Lighting: sum bytes `3..10`, checksum at `11..12`.
+- Buttons: sum bytes `3..56`, checksum at `57..58`.
 
-El **Polling Rate no usa checksum de 16 bits**: el byte `4` es simplemente
-`código ^ 0xFF`.
-
----
-
-## 4. Handshake de lectura
-
-Cada lectura consume un permiso de un solo uso. Se debe serializar y esperar:
-
-1. `SET_REPORT 0xA0` con 8 bytes:
-   `[0xA0, reportId, longitudEsperada, 0x00, 0x01, 0x00, 0x00, 0x00]`.
-2. Esperar **250 ms**.
-3. `GET_REPORT 0xA0` (8 bytes) y comprobar que `respuesta[1] === 0x01`.
-4. `GET_REPORT` del reporte objetivo una sola vez.
-5. Esperar al menos 100 ms antes de la siguiente operación.
-
-Una longitud o un parámetro incorrectos hacen que el firmware rechace la
-lectura. No se debe pedir permiso para varios reportes a la vez ni leer en
-bucle.
+The **polling rate does not use a 16-bit checksum**: byte `4` is simply
+`code ^ 0xFF`.
 
 ---
 
-## 5. Estructura de los reportes
+## 4. Read handshake
 
-### 5.1 Polling Rate — `0x06`, 9 bytes
+Every read consumes a single-use permission. It must be serialized and waited
+for:
 
-| Offset | Valor |
+1. `SET_REPORT 0xA0` with 8 bytes:
+   `[0xA0, reportId, expectedLength, 0x00, 0x01, 0x00, 0x00, 0x00]`.
+2. Wait **250 ms**.
+3. `GET_REPORT 0xA0` (8 bytes) and check that `response[1] === 0x01`.
+4. `GET_REPORT` the target report once.
+5. Wait at least 100 ms before the next operation.
+
+An incorrect length or parameter causes the firmware to reject the read. Do not
+request permission for several reports at once, and do not read in a loop.
+
+---
+
+## 5. Report structures
+
+### 5.1 Polling rate — `0x06`, 9 bytes
+
+| Offset | Value |
 | :--- | :--- |
 | `0x00` | `0x06` |
 | `0x01` | `0x09` |
-| `0x02` | `0x01` (perfil) |
+| `0x02` | `0x01` (profile) |
 | `0x03` | `0x08`=125, `0x04`=250, `0x02`=500, `0x01`=1000 |
-| `0x04` | `código ^ 0xFF` |
+| `0x04` | `code ^ 0xFF` |
 | `0x05..0x08` | `0x00` |
 
-### 5.2 Iluminación y preferencias — `0x05`, 15 bytes
+### 5.2 Lighting and preferences — `0x05`, 15 bytes
 
-| Offset | Valor |
+| Offset | Value |
 | :--- | :--- |
 | `0x00` | `0x05` |
 | `0x01` | `0x0F` |
-| `0x02` | `0x01` (perfil) |
-| `0x03` | `(modo << 4)`; modos `0..6` |
-| `0x04` | `(deepSleep & 0xF0) \| (velocidad & 0x0F)` |
-| `0x05` | `((deepSleep & 0x0F) << 4) \| (brillo & 0x0F)` |
+| `0x02` | `0x01` (profile) |
+| `0x03` | `(mode << 4)`; modes `0..6` |
+| `0x04` | `(deepSleep & 0xF0) \| (speed & 0x0F)` |
+| `0x05` | `((deepSleep & 0x0F) << 4) \| (brightness & 0x0F)` |
 | `0x06..0x08` | R, G, B |
-| `0x09` | minutos de reposo × 2 (0.5–30) |
+| `0x09` | sleep minutes × 2 (0.5–30) |
 | `0x0A` | `keyResponseMs / 2` (4–50) |
-| `0x0B..0x0C` | checksum big-endian de `3..10` |
+| `0x0B..0x0C` | big-endian checksum of `3..10` |
 | `0x0D..0x0E` | padding |
 
-Modos reales del X11: `0` apagado, `1` estático, `2` respiración, `3` neón,
-`4` respiración multicolor, `5` DPI fijo, `6` DPI respirando. Los modos `7..11`
-del software original no tienen efecto en este modelo.
+Real X11 modes: `0` off, `1` static, `2` breathing, `3` neon, `4` color
+breathing, `5` static DPI, `6` breathing DPI. Modes `7..11` from the original
+software have no effect on this model.
 
-Velocidad LED `1..5`, brillo `1..8`.
+LED speed `1..5`, brightness `1..8`.
 
 ### 5.3 DPI — `0x04`, 56 bytes
 
-| Offset | Valor |
+| Offset | Value |
 | :--- | :--- |
 | `0x00` | `0x04` |
 | `0x01` | `0x38` |
-| `0x02` | `0x01` (perfil) |
+| `0x02` | `0x01` (profile) |
 | `0x03` | `(LOD << 4) \| angleSnap`; LOD `0`=1 mm, `1`=2 mm, `2`=0.7 mm |
 | `0x04` | `(motionSync ? 0x10 : 0) \| rippleControl` |
-| `0x05` | bitmask de etapas activas (por defecto `0x3F`) |
-| `0x06` | bitmask de etapas con escala doble |
-| `0x07` | bitmask de etapas con escala triple |
-| `0x08..0x0F` | byte bajo del DPI de las etapas 1..8 |
-| `0x10..0x17` | byte alto / modo de las etapas 1..8 |
-| `0x18` | etapa activa **1-based** |
-| `0x19..0x30` | 8 colores RGB (3 bytes por etapa) |
-| `0x31` | indicador DPI: `1` parpadeo, `2` fijo, `3` apagado |
-| `0x32..0x33` | checksum big-endian de `3..49` |
+| `0x05` | bitmask of active stages (default `0x3F`) |
+| `0x06` | bitmask of stages with double scale |
+| `0x07` | bitmask of stages with triple scale |
+| `0x08..0x0F` | low DPI byte for stages 1..8 |
+| `0x10..0x17` | high/mode byte for stages 1..8 |
+| `0x18` | active stage, **1-based** |
+| `0x19..0x30` | 8 RGB colors (3 bytes per stage) |
+| `0x31` | DPI indicator: `1` blinking, `2` static, `3` off |
+| `0x32..0x33` | big-endian checksum of `3..49` |
 | `0x34..0x37` | padding |
 
-La codificación **no es lineal**. El sensor PAW3311 usa una tabla de 220
-entradas:
+The encoding **is not linear**. The PAW3311 sensor uses a 220-entry table:
 
-- Índices `0..199`: DPI `50..10000` en pasos de 50, byte alto `0`.
-- Índices `200..219`: DPI `10100..12000` en pasos de 100, byte alto `1`.
-- DPI `> 12000` y `< 24000`: se divide entre 2 y se marca la etapa como
-  "double".
-- DPI `24100..25000`: se divide entre 3 y se marca como "triple".
-- Para decodificar valores altos se debe usar la última aparición del byte en
-  la tabla (`lastIndexOf`), porque la tabla contiene valores repetidos entre
-  ambos tramos.
+- Indices `0..199`: DPI `50..10000` in steps of 50, high byte `0`.
+- Indices `200..219`: DPI `10100..12000` in steps of 100, high byte `1`.
+- DPI `> 12000` and `< 24000`: divide by 2 and mark the stage as "double".
+- DPI `24100..25000`: divide by 3 and mark it as "triple".
+- To decode high values, use the last occurrence of the byte in the table
+  (`lastIndexOf`), because the table contains repeated values across both
+  ranges.
 
-### 5.4 Mapeo de botones — `0x08`, 59 bytes
+### 5.4 Button mapping — `0x08`, 59 bytes
 
-| Offset | Valor |
+| Offset | Value |
 | :--- | :--- |
 | `0x00` | `0x08` |
 | `0x01` | `0x3B` |
-| `0x02` | `0x01` (perfil) |
-| `0x03..0x38` | 18 slots × 3 bytes: `[acción, modificadores, usageId]` |
-| `0x39..0x3A` | checksum big-endian de `3..56` |
+| `0x02` | `0x01` (profile) |
+| `0x03..0x38` | 18 slots × 3 bytes: `[action, modifiers, usageId]` |
+| `0x39..0x3A` | big-endian checksum of `3..56` |
 
-Offset del slot `n` (1-based): `3 + (n - 1) * 3`.
+Offset of slot `n` (1-based): `3 + (n - 1) * 3`.
 
-Valores por defecto de escritura:
+Default write values:
 
-| Slot | Acción | Uso |
+| Slot | Action | Purpose |
 | :--- | :--- | :--- |
-| 1 | `0x02` | Clic izquierdo |
-| 2 | `0x03` | Clic derecho |
-| 3 | `0x04` | Clic central |
-| 4 | `0x01` | Desactivado |
-| 5 | `0x01` | Desactivado (protegido) |
-| 6 | `0x0D` | Ciclo de DPI |
-| 7 | `0x06` | Adelante |
-| 8 | `0x05` | Atrás |
-| 9..16 | `0x01` | Desactivado |
-| 17 | `0x09` | Rueda arriba |
-| 18 | `0x0A` | Rueda abajo |
+| 1 | `0x02` | Left click |
+| 2 | `0x03` | Right click |
+| 3 | `0x04` | Middle click |
+| 4 | `0x01` | Disabled |
+| 5 | `0x01` | Disabled (protected) |
+| 6 | `0x0D` | DPI cycle |
+| 7 | `0x06` | Forward |
+| 8 | `0x05` | Back |
+| 9..16 | `0x01` | Disabled |
+| 17 | `0x09` | Scroll up |
+| 18 | `0x0A` | Scroll down |
 
-Al leer, el firmware reordena algunos slots (por ejemplo, el slot 7 de lectura
-puede mostrar `0x3C`, la tecla de modo). La aplicación usa un mapa de lectura
-distinto del de escritura.
+When reading, the firmware reorders some slots (for example, read slot 7 may
+show `0x3C`, the mode key). The application uses a different read map from the
+write map.
 
-Acciones del firmware (`FirmwareAction`): `0x01` desactivado, `0x02` clic
-izquierdo, `0x03` clic derecho, `0x04` clic central, `0x05` atrás, `0x06`
-adelante, `0x07` doble clic, `0x08` fuego, `0x09` rueda arriba, `0x0A` rueda
-abajo, `0x0D` ciclo DPI, `0x0E` DPI+, `0x0F` DPI-, `0x10` sniper, `0x11`
-teclado, `0x12` macro, `0x13` abrir programa, `0x14` menú inicio, `0x15..0x1C`
-multimedia, `0x1D..0x26` sistema/navegador, `0x28..0x36` perfiles y ciclos.
-Modificadores: Ctrl `1`, Shift `2`, Alt `4`, Win `8`.
+Firmware actions (`FirmwareAction`): `0x01` disabled, `0x02` left click,
+`0x03` right click, `0x04` middle click, `0x05` back, `0x06` forward,
+`0x07` double click, `0x08` fire, `0x09` scroll up, `0x0A` scroll down,
+`0x0D` DPI cycle, `0x0E` DPI+, `0x0F` DPI-, `0x10` sniper, `0x11` keyboard,
+`0x12` macro, `0x13` launch program, `0x14` start menu, `0x15..0x1C` media,
+`0x1D..0x26` system/browser, `0x28..0x36` profiles and cycles.
+Modifiers: Ctrl `1`, Shift `2`, Alt `4`, Win `8`.
 
-### 5.5 Eventos asíncronos — Report `0x03`
+### 5.5 Asynchronous events — report `0x03`
 
-En WebHID, `inputreport.data` **no incluye** el Report ID. El formato es:
+In WebHID, `inputreport.data` **does not include** the Report ID. The format is:
 
 ```
-[0x55, código, param1, param2]
+[0x55, code, param1, param2]
 ```
 
-| Código | Significado |
+| Code | Meaning |
 | :--- | :--- |
-| `0x40` / `0x41` | Batería: `param1` estado, `param2` porcentaje |
-| `0x50` | ACK: `param1` `0`=éxito, `1`=fallo; `param2`=Report ID |
-| `0x10` | Cambio de etapa DPI: `param1` etapa 1-based |
-| `0x80` | Cambio de perfil |
+| `0x40` / `0x41` | Battery: `param1` status, `param2` percentage |
+| `0x50` | ACK: `param1` `0`=success, `1`=failure; `param2`=Report ID |
+| `0x10` | DPI stage change: `param1` 1-based stage |
+| `0x80` | Profile change |
 
-La batería **no se lee con el reporte `0x0B`**. El `0x0B` es la versión del
-dispositivo. Si no se concede permiso a la interfaz de eventos, la aplicación
-simplemente no muestra la batería; no debe intentar sondearla por Feature
+The battery **is not read through report `0x0B`**. `0x0B` is the device
+version. If permission for the events interface is not granted, the application
+simply does not show the battery; it must not try to poll it through a Feature
 Report.
 
 ---
 
-## 6. Buenas prácticas y recuperación
+## 6. Best practices and recovery
 
-- Serializar todas las operaciones y dejar al menos **150 ms** entre reportes.
-- No enviar paquetes desconocidos o con longitudes incorrectas: algunos
-  ajustes se persisten en el firmware.
-- No leer en bucle ni pedir varios permisos `0xA0` a la vez.
-- Tras una escritura, el ACK (`0x50`) llega por la interfaz de eventos. Si no
-  está disponible, no bloquear la aplicación esperándolo indefinidamente.
-- Si el ratón deja de responder: desconectar y reconectar el receptor 2.4G.
-  En modelos con Bluetooth, cambiar brevemente a Bluetooth y volver a 2.4G
-  también reinicia la comunicación. No hay recuperación de firmware por
-  software.
+- Serialize all operations and leave at least **150 ms** between reports.
+- Do not send unknown packets or packets with incorrect lengths: some settings
+  are persisted in firmware.
+- Do not read in a loop or request several `0xA0` permissions at once.
+- After a write, the ACK (`0x50`) arrives on the events interface. If it is not
+  available, do not block the application waiting for it indefinitely.
+- If the mouse stops responding: unplug and reconnect the 2.4G receiver. On
+  models with Bluetooth, briefly switching to Bluetooth and back to 2.4G also
+  resets communication. There is no software firmware recovery.
 
 ---
 
-## 7. Referencias
+## 7. References
 
-- `HarukaYamamoto0/attack-shark-x11-driver` (MIT): documentación del protocolo,
-  builders de DPI, botones, polling e iluminación.
-- `iago-fragnan/attack-shark-x11-linux` (GPL-3.0): análisis complementario y
-  uso de la interfaz de eventos.
-- Descriptor HID real del receptor `1d57:fa60` en
+- `HarukaYamamoto0/attack-shark-x11-driver` (MIT): protocol documentation,
+  DPI, button, polling and lighting builders.
+- `iago-fragnan/attack-shark-x11-linux` (GPL-3.0): complementary analysis and
+  use of the events interface.
+- Real HID descriptor of the `1d57:fa60` receiver at
   `/sys/class/hidraw/hidraw5/device/report_descriptor`.

@@ -1,0 +1,15 @@
+# Attack Shark X11 / X11 Pro / X11 SE Gaming Mouse
+# Reglas udev para permitir acceso sin root (WebHID y scripts locales)
+# Vendor ID: 0x1d57
+# Product IDs:
+#   0xfa60: Receptor inalámbrico 2.4G (Dongle)
+#   0xfa61: Modo cableado USB
+#   0x2124: Variante USB cableada
+
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="1d57", ATTRS{idProduct}=="fa60", MODE="0666", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="1d57", ATTRS{idProduct}=="fa61", MODE="0666", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="1d57", ATTRS{idProduct}=="2124", MODE="0666", TAG+="uaccess"
+
+SUBSYSTEM=="usb", ATTRS{idVendor}=="1d57", ATTRS{idProduct}=="fa60", MODE="0666", TAG+="uaccess"
+SUBSYSTEM=="usb", ATTRS{idVendor}=="1d57", ATTRS{idProduct}=="fa61", MODE="0666", TAG+="uaccess"
+SUBSYSTEM=="usb", ATTRS{idVendor}=="1d57", ATTRS{idProduct}=="2124", MODE="0666", TAG+="uaccess"

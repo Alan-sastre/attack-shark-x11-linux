@@ -138,6 +138,13 @@ software have no effect on this model.
 
 LED speed `1..5`, brightness `1..8`.
 
+Only modes `1` (static) and `2` (breathing) use the custom R/G/B value at
+bytes `6..8`. Modes `3` and `4` generate their own colors. Modes `5` and `6`
+use the per-stage colors stored in report `0x04` at bytes `25..48`. When the
+physical DPI button is pressed, the firmware briefly displays the color of the
+new stage even if another mode is active; the host should reapply report `0x05`
+after about one second to restore the user's chosen mode.
+
 ### 5.3 DPI — `0x04`, 56 bytes
 
 | Offset | Value |

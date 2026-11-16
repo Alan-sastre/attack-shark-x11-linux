@@ -138,6 +138,14 @@ del software original no tienen efecto en este modelo.
 
 Velocidad LED `1..5`, brillo `1..8`.
 
+Solo los modos `1` (estático) y `2` (respiración) usan el color R/G/B
+personalizado de los bytes `6..8`. Los modos `3` y `4` generan sus propios
+colores. Los modos `5` y `6` usan los colores por etapa guardados en el reporte
+`0x04`, bytes `25..48`. Al pulsar el botón físico de DPI, el firmware muestra
+brevemente el color de la nueva etapa aunque haya otro modo activo; el host debe
+reenviar el reporte `0x05` tras aproximadamente un segundo para restaurar el
+modo elegido por el usuario.
+
 ### 5.3 DPI — `0x04`, 56 bytes
 
 | Offset | Valor |

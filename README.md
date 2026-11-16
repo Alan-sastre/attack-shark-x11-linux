@@ -42,6 +42,8 @@ Built by reverse engineering the firmware and the official Windows software usin
 - **RGB lighting:**
     - 7 real X11 modes (Off, Static, Breathing, Neon, Color Breathing, Static DPI and Breathing DPI).
     - 24-bit color picker (16.8 million colors) and quick palette.
+    - The custom color applies to **Static** and **Breathing**. **Neon** and **Color Breathing** use firmware-generated colors. **Static DPI** and **Breathing DPI** use the color assigned to the active DPI level.
+    - If you press the physical DPI button while another mode is active, the firmware briefly shows the new level's color; the app restores your selected mode after about one second.
     - Speed control (1 to 5) and brightness control (1 to 8).
     - The **RGB charging dock is independent**: it does not expose a HID configuration channel. Its effects are changed with the dock's touch button (short press) and turned off with a long press.
 - **Sensor & competitive performance:**

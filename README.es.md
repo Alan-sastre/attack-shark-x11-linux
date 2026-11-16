@@ -42,6 +42,8 @@ Construido realizando ingeniería inversa del firmware y software oficial de Win
 - **Iluminación RGB:**
     - 7 modos reales del X11 (Apagado, Estático, Respiración, Neón, Respiración Multicolor, DPI fijo y DPI respirando).
     - Selector de color de 24 bits (16.8 millones de colores) y paleta rápida.
+    - El color personalizado se aplica en **Estático** y **Respiración**. **Neón** y **Respiración Multicolor** usan colores automáticos del firmware. **DPI fijo** y **DPI respirando** usan el color asignado al nivel de DPI activo.
+    - Si pulsas el botón físico de DPI mientras hay otro modo activo, el firmware muestra brevemente el color del nuevo nivel; la aplicación restaura tu modo elegido al cabo de un segundo.
     - Control de velocidad (1 a 5) y brillo (1 a 8).
     - La **base de carga RGB es independiente**: no expone un canal HID de configuración. Sus efectos se cambian con el botón táctil de la base (pulsación corta) y se apagan con una pulsación larga.
 - **Sensor & Rendimiento Competitivo:**

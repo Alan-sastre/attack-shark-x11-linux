@@ -10,6 +10,12 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DESKTOP_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/applications"
 DESKTOP_FILE="$DESKTOP_DIR/attack-shark-x11.desktop"
 
+if [ "$EUID" -eq 0 ]; then
+    echo "No ejecutes este instalador con sudo." >&2
+    echo "Ejecuta ./install.sh como tu usuario; solo se pedirá sudo para udev." >&2
+    exit 1
+fi
+
 echo "=== Instalando Attack Shark X11 Linux Driver ==="
 
 # 1. Reglas udev: permiten acceder a los hidraw sin ejecutar la app como root.

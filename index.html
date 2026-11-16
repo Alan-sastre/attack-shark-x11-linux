@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attack Shark X11 - Centro de Configuración Linux</title>
+    <link rel="icon" type="image/png" href="assets/icon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Barra Superior -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand">
+                <img src="assets/icon.png" alt="Attack Shark Logo" class="brand-icon">
+                <div class="brand-text">
+                    <h1>ATTACK SHARK X11</h1>
+                    <span class="model-tag">Linux Gaming Driver</span>
+                </div>
+            </div>
+
+            <div class="header-status-group">
+                <span id="connectionTypeBadge" class="status-badge" style="display: none;">
+                    <i class="fa-solid fa-wifi"></i> 2.4GHz
+                </span>
+                <span id="batteryBadge" class="battery-pill" style="display: none;">
+                    <i id="batteryIcon" class="fa-solid fa-battery-full text-success"></i>
+                    <span id="batteryPercentage">--%</span>
+                </span>
+                <div id="connectionStatusBadge" class="status-badge offline">
+                    <span class="dot"></span> Desconectado
+                </div>
+                <button id="readMouseBtn" class="btn btn-outline" style="display: none;">
+                    <i class="fa-solid fa-download"></i> Leer ratón
+                </button>
+                <button id="connectBtn" class="btn btn-primary">
+                    <i class="fa-solid fa-link"></i> Conectar Ratón
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="main-layout">
+        <!-- Panel Izquierdo: Vista Interactiva del Ratón -->
+        <aside class="mouse-showcase-panel">
+            <div class="showcase-header">
+                <h2 id="deviceName" class="device-title">Attack Shark X11</h2>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Sensor PixArt PAW3311 &bull; MCU Tri-Modo</p>
+            </div>
+
+            <div class="mouse-visual-container">
+                <img src="assets/mouse.png" alt="Attack Shark X11 Ratón" class="mouse-img">
+                <!-- Pines interactivos sobre los botones -->
+                <div class="btn-pin pin-1" title="Botón 1: Clic Izquierdo">1</div>
+                <div class="btn-pin pin-2" title="Botón 2: Clic Derecho">2</div>
+                <div class="btn-pin pin-3" title="Botón 3: Clic Central / Rueda">3</div>
+                <div class="btn-pin pin-4" title="Botón 4: Lateral Adelante">4</div>
+                <div class="btn-pin pin-5" title="Botón 5: Lateral Atrás">5</div>
+                <div class="btn-pin pin-6" title="Botón DPI: control de firmware, no es un botón HID estándar">DPI</div>
+            </div>
+
+            <div class="quick-info-box">
+                <div class="info-item">
+                    <div class="info-label">Tasa Sondeo</div>
+                    <div id="quickPollingVal" class="info-value">1000 Hz</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">DPI Actual</div>
+                    <div id="quickDpiVal" class="info-value">1600 DPI</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Modo</div>
+                    <div class="info-value" id="quickModeVal">2.4G / USB</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Panel Derecho: Espacio de Configuración -->
+        <section class="config-workspace">
+            <nav class="tabs-navigation">
+                <button class="nav-tab active" data-tab="dpi">
+                    <i class="fa-solid fa-gauge-high"></i> Sensibilidad (DPI)
+                </button>
+                <button class="nav-tab" data-tab="polling">
+                    <i class="fa-solid fa-wave-square"></i> Tasa de Sondeo
+                </button>
+                <button class="nav-tab" data-tab="rgb">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Iluminación RGB
+                </button>
+                <button class="nav-tab" data-tab="buttons">
+                    <i class="fa-solid fa-gamepad"></i> Botones
+                </button>
+                <button class="nav-tab" data-tab="sensor">
+                    <i class="fa-solid fa-sliders"></i> Sensor & Energía
+                </button>
+                <button class="nav-tab" data-tab="profiles">
+                    <i class="fa-solid fa-floppy-disk"></i> Perfiles
+                </button>
+            </nav>
+
+            <div class="tab-content">
+                <!-- Pestaña 1: DPI -->
+                <div id="tab-dpi" class="tab-pane active">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <div>
+                            <h3 style="font-size: 1.15rem; font-weight: 700;">Niveles de Sensibilidad (DPI)</h3>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">
+                                Configura hasta 6 niveles personalizados (100 - 22,000 DPI) y asígnales colores indicadores.
+                            </p>
+                        </div>
+                        <button id="applyDpiBtn" class="btn btn-primary">
+                            <i class="fa-solid fa-check"></i> Aplicar DPI
+                        </button>
+                    </div>
+
+                    <div id="dpiStagesContainer" class="dpi-stages-grid">
+                        <!-- Las tarjetas se generan dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- Pestaña 2: Tasa de Sondeo -->
+                <div id="tab-polling" class="tab-pane">
+                    <h3 style="font-size: 1.15rem; font-weight: 700;">Tasa de Sondeo (Polling Rate)</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">
+                        Frecuencia con la que el ratón envía información de movimiento a tu sistema Linux.
+                    </p>
+
+                    <div class="polling-grid">
+                        <div class="polling-rate-card" data-rate="125">
+                            <div class="rate-val">125</div>
+                            <div class="rate-unit">Hz</div>
+                            <div class="rate-latency">8.0 ms de respuesta</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 6px;">Ahorro de batería</div>
+                        </div>
+                        <div class="polling-rate-card" data-rate="250">
+                            <div class="rate-val">250</div>
+                            <div class="rate-unit">Hz</div>
+                            <div class="rate-latency">4.0 ms de respuesta</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 6px;">Oficina / Navegación</div>
+                        </div>
+                        <div class="polling-rate-card" data-rate="500">
+                            <div class="rate-val">500</div>
+                            <div class="rate-unit">Hz</div>
+                            <div class="rate-latency">2.0 ms de respuesta</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 6px;">Equilibrado Gaming</div>
+                        </div>
+                        <div class="polling-rate-card active" data-rate="1000">
+                            <div class="rate-val">1000</div>
+                            <div class="rate-unit">Hz</div>
+                            <div class="rate-latency">1.0 ms de respuesta</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 6px;">Máximo Rendimiento Esports</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pestaña 3: Iluminación RGB -->
+                <div id="tab-rgb" class="tab-pane">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <div>
+                            <h3 style="font-size: 1.15rem; font-weight: 700;">Estudio de Iluminación RGB</h3>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">
+                                Personaliza los efectos, colores y velocidad del sistema LED de tu ratón.
+                            </p>
+                        </div>
+                        <button id="applyRgbBtn" class="btn btn-primary">
+                            <i class="fa-solid fa-check"></i> Aplicar Iluminación
+                        </button>
+                    </div>
+
+                    <div class="rgb-controls-grid">
+                        <div>
+                            <div class="form-group">
+                                <label class="form-label" for="rgbModeSelect">Efecto / Modo de Iluminación</label>
+                                <select id="rgbModeSelect" class="form-select"></select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Color Personalizado</label>
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <input type="color" id="rgbColorPicker" class="stage-color-picker" style="width: 44px; height: 44px;">
+                                    <span style="font-size: 0.85rem; color: var(--text-secondary);">Selecciona cualquier color RGB de 24 bits</span>
+                                </div>
+                                <div class="color-swatches-row">
+                                    <span class="color-swatch" data-color="#e2211c" style="background: #e2211c;"></span>
+                                    <span class="color-swatch" data-color="#ff5400" style="background: #ff5400;"></span>
+                                    <span class="color-swatch" data-color="#ffff00" style="background: #ffff00;"></span>
+                                    <span class="color-swatch" data-color="#00e676" style="background: #00e676;"></span>
+                                    <span class="color-swatch" data-color="#00d2ff" style="background: #00d2ff;"></span>
+                                    <span class="color-swatch" data-color="#0055ff" style="background: #0055ff;"></span>
+                                    <span class="color-swatch" data-color="#9d4edd" style="background: #9d4edd;"></span>
+                                    <span class="color-swatch" data-color="#ff00a0" style="background: #ff00a0;"></span>
+                                    <span class="color-swatch" data-color="#ffffff" style="background: #ffffff;"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Brillo de los LEDs</label>
+                                <div class="slider-container">
+                                    <input type="range" id="rgbBrightnessSlider" min="1" max="8" value="5">
+                                    <span id="rgbBrightnessVal" class="slider-val-badge">5</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Velocidad de Animación</label>
+                                <div class="slider-container">
+                                    <input type="range" id="rgbSpeedSlider" min="1" max="5" value="4">
+                                    <span id="rgbSpeedVal" class="slider-val-badge">4</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rgb-preview-wrapper">
+                            <div id="rgbPreviewBox" class="rgb-preview-box"></div>
+                            <span style="font-weight: 600; font-size: 0.95rem;">Vista Previa de Iluminación</span>
+                            <span style="font-size: 0.8rem; color: var(--text-muted); text-align: center;">
+                                Controla solo la iluminación del ratón. La base de carga tiene su propio botón táctil: pulsación corta cambia el efecto/color y pulsación larga lo apaga.
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pestaña 4: Botones -->
+                <div id="tab-buttons" class="tab-pane">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <div>
+                            <h3 style="font-size: 1.15rem; font-weight: 700;">Mapeo de Botones</h3>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">
+                                Asigna funciones a los 5 botones estándar. El botón superior de DPI se configura por separado porque el firmware lo trata como un control propio, no como un sexto botón HID.
+                            </p>
+                        </div>
+                        <button id="applyButtonsBtn" class="btn btn-primary">
+                            <i class="fa-solid fa-check"></i> Aplicar Mapeo
+                        </button>
+                    </div>
+
+                    <div id="buttonMappingContainer">
+                        <!-- Las filas se generan con app.js -->
+                    </div>
+                </div>
+
+                <!-- Pestaña 5: Sensor & Energía -->
+                <div id="tab-sensor" class="tab-pane">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <div>
+                            <h3 style="font-size: 1.15rem; font-weight: 700;">Sensor Óptico & Ahorro de Energía</h3>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">
+                                Calibración de precisión para gaming profesional y gestión inteligente de batería.
+                            </p>
+                        </div>
+                        <button id="applySensorBtn" class="btn btn-primary">
+                            <i class="fa-solid fa-check"></i> Guardar Ajustes
+                        </button>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                        <div>
+                            <h4 style="font-size: 0.95rem; color: var(--accent-cyan); margin-bottom: 1rem;">
+                                <i class="fa-solid fa-crosshairs"></i> Calibración del Sensor
+                            </h4>
+
+                            <div class="form-group">
+                                <label class="form-label">Distancia de Despegue (Lift-Off Distance / LOD)</label>
+                                <div style="display: flex; gap: 16px; margin-top: 8px;">
+                                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                        <input type="radio" name="lodRadio" value="0" checked> 1 mm (Bajo - Recomendado FPS)
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                        <input type="radio" name="lodRadio" value="1"> 2 mm (Alto)
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                        <input type="radio" name="lodRadio" value="2"> 0.7 mm (Mínimo)
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Tiempo de Anti-Rebote (Key Debounce)</label>
+                                <div class="slider-container">
+                                    <input type="range" id="debounceSlider" min="2" max="20" step="1" value="4">
+                                    <span id="debounceVal" class="slider-val-badge">4 ms</span>
+                                </div>
+                                <span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 4px;">
+                                    Valores bajos (2-4ms) aumentan la velocidad de clic para shooters competitivos.
+                                    El X11 no expone este ajuste por HID; se guarda solo en el perfil local.
+                                </span>
+                            </div>
+
+                            <div class="form-group" style="display: flex; flex-direction: column; gap: 10px; margin-top: 1rem;">
+                                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                    <input type="checkbox" id="motionSyncChk" checked>
+                                    <span><strong>Motion Sync:</strong> Sincronización precisa sensor-sondeo USB</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                    <input type="checkbox" id="angleSnapChk">
+                                    <span><strong>Angle Snapping:</strong> Corrección de líneas rectas (off para gaming)</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                    <input type="checkbox" id="rippleChk">
+                                    <span><strong>Ripple Control:</strong> Suavizado a altos niveles de DPI</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 style="font-size: 0.95rem; color: var(--success); margin-bottom: 1rem;">
+                                <i class="fa-solid fa-battery-three-quarters"></i> Ahorro de Energía (Modo Inalámbrico)
+                            </h4>
+
+                            <div class="form-group">
+                                <label class="form-label">Tiempo de Reposo / Suspensión Profunda</label>
+                                <div class="slider-container">
+                                    <input type="range" id="sleepSlider" min="1" max="30" step="1" value="5">
+                                    <span id="sleepVal" class="slider-val-badge">5 min</span>
+                                </div>
+                                <span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 4px;">
+                                    El ratón entra en bajo consumo al no detectar movimiento.
+                                </span>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Apagar LEDs durante Inactividad</label>
+                                <div class="slider-container">
+                                    <input type="range" id="lightOffSlider" min="10" max="60" step="5" value="30">
+                                    <span id="lightOffVal" class="slider-val-badge">30 seg</span>
+                                </div>
+                                <span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 4px;">
+                                    Apaga las luces para extender sustancialmente la batería en 2.4G.
+                                    Este modelo no expone el apagado por inactividad vía HID; se guarda solo en el perfil local.
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pestaña 6: Perfiles -->
+                <div id="tab-profiles" class="tab-pane">
+                    <h3 style="font-size: 1.15rem; font-weight: 700;">Gestión de Perfiles</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">
+                        Guarda diferentes configuraciones para cada juego o aplicación y expórtalas en formato JSON.
+                    </p>
+
+                    <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.5rem; margin-top: 1.5rem; max-width: 600px;">
+                        <div class="form-group">
+                            <label class="form-label" for="profileSelect">Perfil Activo</label>
+                            <select id="profileSelect" class="form-select"></select>
+                        </div>
+
+                        <div style="display: flex; gap: 12px; margin-top: 1.5rem;">
+                            <button id="exportProfileBtn" class="btn btn-outline">
+                                <i class="fa-solid fa-file-export"></i> Exportar Perfil (.json)
+                            </button>
+                            <label class="btn btn-outline" style="cursor: pointer; margin: 0;">
+                                <i class="fa-solid fa-file-import"></i> Importar Perfil
+                                <input type="file" id="importProfileInput" accept=".json" style="display: none;">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Contenedor para Alertas Toast -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Scripts de la Aplicación -->
+    <script src="js/protocol.js"></script>
+    <script src="js/webhid.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

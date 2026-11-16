@@ -12,7 +12,21 @@ Controlador nativo y suite de configuración completa para el ratón gamer **Att
 
 Construido realizando ingeniería inversa del firmware y software oficial de Windows mediante la metodología de [REA (Reverse Engineer Anything)](https://rea.tools/es/).
 
-![Attack Shark X11](assets/mouse.png)
+![Attack Shark X11 Control Center](assets/screenshot.png)
+
+> **Nota:** "X11" en el nombre del producto es el modelo del ratón, no el servidor gráfico X11. La aplicación funciona tanto en sesiones **Wayland** como **X11**.
+
+---
+
+## 🖱️ Compatibilidad
+
+| Dispositivo / modo | Estado |
+| :--- | :--- |
+| Attack Shark X11 — receptor 2.4G (`1d57:fa60`) | Verificado en hardware real |
+| Attack Shark X11 — USB por cable | Soportado por la implementación del protocolo; se agradecen reportes de hardware |
+| Attack Shark X11 — Bluetooth | La configuración por Bluetooth no está expuesta; usa 2.4G o USB |
+| Base de carga RGB | No configurable por HID; usa su botón táctil |
+| Otros modelos Attack Shark | Sin soporte oficial; abre un issue con el PID y el descriptor de reportes |
 
 ---
 
@@ -53,6 +67,21 @@ Construido realizando ingeniería inversa del firmware y software oficial de Win
 - Todas las operaciones se serializan y se espacian al menos 150 ms; las lecturas usan el permiso de un solo uso del firmware (`0xA0`) y comprueban su respuesta.
 - Si el ratón deja de responder tras un comando, **desconecta y vuelve a conectar el receptor 2.4G**. En modelos con Bluetooth, también puedes cambiar brevemente a Bluetooth y volver a 2.4G.
 - No se debe enviar el reporte `0x10`: está relacionado con el modo bootloader.
+
+---
+
+## 🧰 Solución de problemas
+
+| Problema | Qué revisar |
+| :--- | :--- |
+| El dispositivo no aparece en el selector WebHID | Usa Helium, Chrome, Chromium, Brave o Edge. Cierra otras pestañas que puedan tener el dispositivo abierto, recarga con `Ctrl+Shift+R` y conecta el receptor 2.4G. |
+| "Permiso denegado" o no se puede abrir el dispositivo | Ejecuta `./install.sh` o `sudo ./setup_udev.sh`, y desconecta y vuelve a conectar el receptor. Comprueba que tu usuario puede leer los nodos `/dev/hidraw*`. |
+| El ratón deja de responder | Desconecta y vuelve a conectar el receptor 2.4G. En modelos con Bluetooth, cambia brevemente a Bluetooth y vuelve a 2.4G. No envíes reportes desconocidos. |
+| La batería muestra `--%` | La batería llega de forma asíncrona por la interfaz de eventos. Si el navegador no concede esa interfaz, el valor simplemente no está disponible; no se sondea por `0x0B`. |
+| Solo veo 5 botones | Es correcto: el X11 expone 5 botones HID estándar. El botón DPI es un control de firmware aparte y aparece en "Avanzado". |
+| El RGB de la base de carga no cambia | La base tiene su propio controlador y botón táctil; no se configura con el protocolo del ratón. |
+| La aplicación no abre | Ejecuta `./run.sh` desde una terminal para ver el error. También puedes abrir `index.html` directamente en un navegador con WebHID. |
+| Nada funciona tras actualizar el kernel | Reconecta el receptor, vuelve a ejecutar `./install.sh` y comprueba que la regla udev está en `/etc/udev/rules.d/`. |
 
 ---
 
@@ -134,6 +163,7 @@ attack-shark-x11-linux/
 │   └── webhid.js                # Gestor de conexión y comunicación WebHID
 ├── assets/
 │   ├── mouse.png                # Render oficial en alta resolución del X11
+│   ├── screenshot.png           # Captura de la interfaz gráfica
 │   ├── icon.png                 # Icono oficial de Attack Shark
 │   └── buttons/                 # Pines indicadores numerados
 ├── shark_ctl.py                 # CLI nativo en Python para terminal y scripts

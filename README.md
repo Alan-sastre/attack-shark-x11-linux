@@ -12,7 +12,21 @@ A native driver and full configuration suite for the **Attack Shark X11** gaming
 
 Built by reverse engineering the firmware and the official Windows software using the [REA (Reverse Engineer Anything)](https://rea.tools/) methodology.
 
-![Attack Shark X11](assets/mouse.png)
+![Attack Shark X11 Control Center](assets/screenshot.png)
+
+> **Note:** "X11" in the product name is the mouse model, not the X11 display server. The application works on both **Wayland** and **X11** sessions.
+
+---
+
+## 🖱️ Compatibility
+
+| Device / mode | Status |
+| :--- | :--- |
+| Attack Shark X11 — 2.4G receiver (`1d57:fa60`) | Verified on real hardware |
+| Attack Shark X11 — USB wired | Supported by the protocol implementation; hardware reports welcome |
+| Attack Shark X11 — Bluetooth | Configuration over Bluetooth is not exposed; use 2.4G or USB |
+| RGB charging dock | Not configurable over HID; use its touch button |
+| Other Attack Shark models | Not officially supported; open an issue with the PID and report descriptor |
 
 ---
 
@@ -53,6 +67,21 @@ Built by reverse engineering the firmware and the official Windows software usin
 - All operations are serialized and spaced by at least 150 ms; reads use the firmware's single-use permission handshake (`0xA0`) and verify its response.
 - If the mouse stops responding after a command, **unplug and reconnect the 2.4G receiver**. On models with Bluetooth, you can also briefly switch to Bluetooth and back to 2.4G.
 - Never send report `0x10`: it is related to bootloader mode.
+
+---
+
+## 🧰 Troubleshooting
+
+| Problem | What to check |
+| :--- | :--- |
+| The device does not appear in the WebHID picker | Use Helium, Chrome, Chromium, Brave or Edge. Close other tabs that may already have the device open, reload with `Ctrl+Shift+R`, and connect the 2.4G receiver. |
+| "Permission denied" or the device cannot be opened | Run `./install.sh` or `sudo ./setup_udev.sh`, then unplug and reconnect the receiver. Check that `/dev/hidraw*` nodes are readable by your user. |
+| The mouse stops responding | Unplug and reconnect the 2.4G receiver. On Bluetooth-capable models, switch briefly to Bluetooth and back to 2.4G. Do not send unknown reports. |
+| Battery shows `--%` | Battery data arrives asynchronously from the events interface. If the browser does not grant that interface, the value simply stays unavailable; it is not polled over `0x0B`. |
+| I only see 5 buttons | That is correct: the X11 exposes 5 standard HID buttons. The DPI key is a separate firmware control shown under "Advanced". |
+| The charging dock RGB does not change | The dock has its own controller and touch button; it is not configurable through the mouse protocol. |
+| The app does not open | Run `./run.sh` from a terminal to see the error. You can also open `index.html` directly in a WebHID-capable browser. |
+| Nothing works after a kernel update | Reconnect the receiver, rerun `./install.sh`, and verify the udev rule is installed in `/etc/udev/rules.d/`. |
 
 ---
 
@@ -138,6 +167,7 @@ attack-shark-x11-linux/
 │   └── webhid.js                # WebHID connection and communication manager
 ├── assets/
 │   ├── mouse.png                # Official high-resolution X11 render
+│   ├── screenshot.png           # Screenshot of the graphical interface
 │   ├── icon.png                 # Official Attack Shark icon
 │   └── buttons/                 # Numbered indicator pins
 ├── shark_ctl.py                 # Native Python CLI for terminals and scripts

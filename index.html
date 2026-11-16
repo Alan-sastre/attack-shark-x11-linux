@@ -178,20 +178,21 @@
 
                             <div class="form-group">
                                 <label class="form-label">Color Personalizado</label>
-                                <div style="display: flex; align-items: center; gap: 12px;">
+                                <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
                                     <input type="color" id="rgbColorPicker" class="stage-color-picker" style="width: 44px; height: 44px;">
-                                    <span style="font-size: 0.85rem; color: var(--text-secondary);">Selecciona cualquier color RGB de 24 bits</span>
+                                    <span id="rgbColorValue" class="rgb-color-value">#FF0000</span>
+                                    <span style="font-size: 0.85rem; color: var(--text-secondary);">Color RGB de 24 bits</span>
                                 </div>
                                 <div class="color-swatches-row">
-                                    <span class="color-swatch" data-color="#e2211c" style="background: #e2211c;"></span>
-                                    <span class="color-swatch" data-color="#ff5400" style="background: #ff5400;"></span>
-                                    <span class="color-swatch" data-color="#ffff00" style="background: #ffff00;"></span>
-                                    <span class="color-swatch" data-color="#00e676" style="background: #00e676;"></span>
-                                    <span class="color-swatch" data-color="#00d2ff" style="background: #00d2ff;"></span>
-                                    <span class="color-swatch" data-color="#0055ff" style="background: #0055ff;"></span>
-                                    <span class="color-swatch" data-color="#9d4edd" style="background: #9d4edd;"></span>
-                                    <span class="color-swatch" data-color="#ff00a0" style="background: #ff00a0;"></span>
-                                    <span class="color-swatch" data-color="#ffffff" style="background: #ffffff;"></span>
+                                    <span class="color-swatch" data-color="#ff0000" style="background: #ff0000;" title="Rojo (#FF0000)"></span>
+                                    <span class="color-swatch" data-color="#ff7f00" style="background: #ff7f00;" title="Naranja (#FF7F00)"></span>
+                                    <span class="color-swatch" data-color="#ffff00" style="background: #ffff00;" title="Amarillo (#FFFF00)"></span>
+                                    <span class="color-swatch" data-color="#00ff00" style="background: #00ff00;" title="Verde (#00FF00)"></span>
+                                    <span class="color-swatch" data-color="#00ffff" style="background: #00ffff;" title="Cian (#00FFFF)"></span>
+                                    <span class="color-swatch" data-color="#0000ff" style="background: #0000ff;" title="Azul (#0000FF)"></span>
+                                    <span class="color-swatch" data-color="#7f00ff" style="background: #7f00ff;" title="Violeta (#7F00FF)"></span>
+                                    <span class="color-swatch" data-color="#ff00ff" style="background: #ff00ff;" title="Magenta (#FF00FF)"></span>
+                                    <span class="color-swatch" data-color="#ffffff" style="background: #ffffff;" title="Blanco (#FFFFFF)"></span>
                                 </div>
                             </div>
 

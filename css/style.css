@@ -510,6 +510,14 @@ body {
     filter: grayscale(1);
 }
 
+.rgb-color-value {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: 0.03em;
+}
+
 .rgb-mode-note {
     margin-top: 8px;
     font-size: 0.78rem;
